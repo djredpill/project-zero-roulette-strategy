@@ -61,27 +61,33 @@
 /* ===== 8 THEMES ===== */
 body.theme-white      { background:#f8f9fa; color:var(--text-dark) }
 body.theme-dark       { background:#1a1a2e; color:#e0e0e0; --card-bg:rgba(255,255,255,0.07); --muted:#94a3b8 }
-body.theme-blue       { background:#7ba8d4; color:#f0f5fb; --card-bg:rgba(255,255,255,0.14); --muted:#d0e0f0 }
-body.theme-green      { background:#7bb892; color:#e8f5ec; --card-bg:rgba(255,255,255,0.14); --muted:#c5e0d0 }
-body.theme-turquoise  { background:#72c4bc; color:#e0faf6; --card-bg:rgba(255,255,255,0.14); --muted:#a0f0e8 }
-body.theme-gold       { background:#c4a96b; color:#fef8e0; --card-bg:rgba(255,255,255,0.14); --muted:#e8d090 }
-body.theme-pink       { background:#c47db4; color:#fdf0f5; --card-bg:rgba(255,255,255,0.14); --muted:#f0c8e4 }
-body.theme-grey       { background:#98a0a3; color:#edf1f3; --card-bg:rgba(255,255,255,0.14); --muted:#d4dce0 }
+body.theme-blue       { background:#7ba8d4; color:#f0f5fb; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-green      { background:#7bb892; color:#e8f5ec; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-turquoise  { background:#72c4bc; color:#e0faf6; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-gold       { background:#c4a96b; color:#fef8e0; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-pink       { background:#c47db4; color:#fdf0f5; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-grey       { background:#98a0a3; color:#edf1f3; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
 
-/* Dark theme overrides for inputs/buttons */
-body.theme-dark input, body.theme-dark select,
+/* Dark theme: light borders for inputs/buttons */
+body.theme-dark input, body.theme-dark select {
+  background:rgba(255,255,255,0.12); color:inherit; border-color:rgba(255,255,255,0.2);
+}
+body.theme-dark .ghost {
+  border-color:rgba(255,255,255,0.25); color:inherit;
+}
+/* Colored themes: semi-transparent bg, black borders, text handled in overrides section */
 body.theme-blue input, body.theme-blue select,
 body.theme-green input, body.theme-green select,
 body.theme-turquoise input, body.theme-turquoise select,
 body.theme-gold input, body.theme-gold select,
 body.theme-pink input, body.theme-pink select,
 body.theme-grey input, body.theme-grey select {
-  background:rgba(255,255,255,0.12); color:inherit; border-color:rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.12); border-color:#111;
 }
-body.theme-dark .ghost, body.theme-blue .ghost, body.theme-green .ghost,
+body.theme-blue .ghost, body.theme-green .ghost,
 body.theme-turquoise .ghost, body.theme-gold .ghost, body.theme-pink .ghost,
 body.theme-grey .ghost {
-  border-color:rgba(255,255,255,0.25); color:inherit;
+  border-color:#111;
 }
 body.theme-dark .ghost:active, body.theme-blue .ghost:active, body.theme-green .ghost:active,
 body.theme-turquoise .ghost:active, body.theme-gold .ghost:active, body.theme-pink .ghost:active,
@@ -97,6 +103,15 @@ body.theme-dark .history th, body.theme-blue .history th, body.theme-green .hist
 body.theme-turquoise .history th, body.theme-gold .history th, body.theme-pink .history th,
 body.theme-grey .history th {
   border-bottom-color:rgba(255,255,255,0.15);
+}
+/* Colored themes: history table text → black */
+body.theme-blue .history th, body.theme-blue .history td,
+body.theme-green .history th, body.theme-green .history td,
+body.theme-turquoise .history th, body.theme-turquoise .history td,
+body.theme-gold .history th, body.theme-gold .history td,
+body.theme-pink .history th, body.theme-pink .history td,
+body.theme-grey .history th, body.theme-grey .history td {
+  color:#111 !important;
 }
 body.theme-dark .modal-box, body.theme-blue .modal-box, body.theme-green .modal-box,
 body.theme-turquoise .modal-box, body.theme-gold .modal-box, body.theme-pink .modal-box,
@@ -294,6 +309,12 @@ body.theme-dark .sticky-sitout .ghost,body.theme-blue .sticky-sitout .ghost,body
 .outcome-table th{font-weight:700;font-size:11px;color:var(--muted)}
 .outcome-table .win{color:#16a34a;font-weight:600}
 .outcome-table .lose{color:#ef4444;font-weight:600}
+/* Colored themes: outcome table text → black (except .win/.lose) */
+body.theme-blue .outcome-table td, body.theme-green .outcome-table td,
+body.theme-turquoise .outcome-table td, body.theme-gold .outcome-table td,
+body.theme-pink .outcome-table td, body.theme-grey .outcome-table td {
+  color:#111;
+}
 
 /* ===== MODE BADGE ===== */
 .mode-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:800;letter-spacing:0.5px;margin-left:8px;vertical-align:middle}
@@ -407,52 +428,203 @@ body.theme-grey #strategyPromptBar {
   background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.4); color:#111;
 }
 
-/* ===== TEXT COLOR OVERRIDES FOR COLORED THEMES ===== */
+/* ===================================================================
+   COMPREHENSIVE THEME OVERRIDES
+   Root problem: body color on colored themes is very light (e.g. #f0f5fb),
+   so anything using color:inherit or the body color is nearly invisible.
+   Fix: force dark/visible text on all text elements, per-theme accent
+   colors on section headers, black borders on all controls.
+   =================================================================== */
+
+/* --- SHARED: All 6 colored themes --- */
+/* Force ALL text to be readable: labels, .big amounts, helper text, ghost buttons, zero boxes */
+body.theme-blue, body.theme-green, body.theme-turquoise,
+body.theme-gold, body.theme-pink, body.theme-grey {
+  --muted:#111;
+}
+/* Ghost buttons that need black text on colored themes (by ID) */
+body.theme-blue #resetSession, body.theme-blue #exportCsv, body.theme-blue #resetHist,
+body.theme-blue #editMidSession, body.theme-blue #clearSavedState, body.theme-blue #randomSpin,
+body.theme-green #resetSession, body.theme-green #exportCsv, body.theme-green #resetHist,
+body.theme-green #editMidSession, body.theme-green #clearSavedState, body.theme-green #randomSpin,
+body.theme-turquoise #resetSession, body.theme-turquoise #exportCsv, body.theme-turquoise #resetHist,
+body.theme-turquoise #editMidSession, body.theme-turquoise #clearSavedState, body.theme-turquoise #randomSpin,
+body.theme-gold #resetSession, body.theme-gold #exportCsv, body.theme-gold #resetHist,
+body.theme-gold #editMidSession, body.theme-gold #clearSavedState, body.theme-gold #randomSpin,
+body.theme-pink #resetSession, body.theme-pink #exportCsv, body.theme-pink #resetHist,
+body.theme-pink #editMidSession, body.theme-pink #clearSavedState, body.theme-pink #randomSpin,
+body.theme-grey #resetSession, body.theme-grey #exportCsv, body.theme-grey #resetHist,
+body.theme-grey #editMidSession, body.theme-grey #clearSavedState, body.theme-grey #randomSpin {
+  color:#111 !important;
+}
+/* Zero bet boxes: black borders, black text for amounts and labels */
+body.theme-blue .zeroItem, body.theme-green .zeroItem, body.theme-turquoise .zeroItem,
+body.theme-gold .zeroItem, body.theme-pink .zeroItem, body.theme-grey .zeroItem {
+  border-color:#111 !important; color:#111 !important;
+}
+body.theme-blue .zeroItem div, body.theme-green .zeroItem div, body.theme-turquoise .zeroItem div,
+body.theme-gold .zeroItem div, body.theme-pink .zeroItem div, body.theme-grey .zeroItem div {
+  color:#111 !important;
+}
+body.theme-blue .zeroItem .big, body.theme-green .zeroItem .big, body.theme-turquoise .zeroItem .big,
+body.theme-gold .zeroItem .big, body.theme-pink .zeroItem .big, body.theme-grey .zeroItem .big {
+  color:#111 !important;
+}
+/* Uniform bet bar text → black */
+body.theme-blue .uniform-bet-bar, body.theme-green .uniform-bet-bar, body.theme-turquoise .uniform-bet-bar,
+body.theme-gold .uniform-bet-bar, body.theme-pink .uniform-bet-bar, body.theme-grey .uniform-bet-bar {
+  color:#111 !important;
+}
+/* Session summary .big amounts (Starting Bankroll value) → black, but NOT P/L amounts */
+body.theme-blue aside .big:not(#sumSession):not(#sumHist),
+body.theme-green aside .big:not(#sumSession):not(#sumHist),
+body.theme-turquoise aside .big:not(#sumSession):not(#sumHist),
+body.theme-gold aside .big:not(#sumSession):not(#sumHist),
+body.theme-pink aside .big:not(#sumSession):not(#sumHist),
+body.theme-grey aside .big:not(#sumSession):not(#sumHist) {
+  color:#111 !important;
+}
+/* Session summary sub-labels (Starting Bankroll, Session P/L, Historical P/L text) → black */
+body.theme-blue aside div[style*="font-size:12px"], body.theme-green aside div[style*="font-size:12px"],
+body.theme-turquoise aside div[style*="font-size:12px"], body.theme-gold aside div[style*="font-size:12px"],
+body.theme-pink aside div[style*="font-size:12px"], body.theme-grey aside div[style*="font-size:12px"] {
+  color:#111 !important;
+}
+/* Session Balance text → handled by div[style*="font-size:11px"] rule below */
+/* Current balance .big → black */
+body.theme-blue #currentBalance, body.theme-green #currentBalance, body.theme-turquoise #currentBalance,
+body.theme-gold #currentBalance, body.theme-pink #currentBalance, body.theme-grey #currentBalance {
+  color:#111 !important;
+}
+/* Helper text (number pad instructions) → black */
+body.theme-blue div[style*="font-size:11px"], body.theme-green div[style*="font-size:11px"],
+body.theme-turquoise div[style*="font-size:11px"], body.theme-gold div[style*="font-size:11px"],
+body.theme-pink div[style*="font-size:11px"], body.theme-grey div[style*="font-size:11px"] {
+  color:#111 !important;
+}
+/* Pocketed section labels → black */
+body.theme-blue .pocketed-label, body.theme-green .pocketed-label, body.theme-turquoise .pocketed-label,
+body.theme-gold .pocketed-label, body.theme-pink .pocketed-label, body.theme-grey .pocketed-label {
+  color:#111 !important;
+}
+/* Pocketed section values → black, but NOT the ones with JS-set green/red */
+body.theme-blue .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL),
+body.theme-green .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL),
+body.theme-turquoise .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL),
+body.theme-gold .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL),
+body.theme-pink .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL),
+body.theme-grey .pocketed-value:not(#pocketedProfits):not(#sessionLosses):not(#netLifetimePL) {
+  color:#111 !important;
+}
+/* Input text inside boxes → white (so it shows on the semi-transparent bg) */
+body.theme-blue input, body.theme-blue select,
+body.theme-green input, body.theme-green select,
+body.theme-turquoise input, body.theme-turquoise select,
+body.theme-gold input, body.theme-gold select,
+body.theme-pink input, body.theme-pink select,
+body.theme-grey input, body.theme-grey select {
+  color:#fff !important;
+}
 /* Leave Casino → black on all colored themes */
 body.theme-blue #leaveCasinoBtn,body.theme-green #leaveCasinoBtn,
 body.theme-turquoise #leaveCasinoBtn,body.theme-gold #leaveCasinoBtn,
 body.theme-pink #leaveCasinoBtn,body.theme-grey #leaveCasinoBtn {
   color:#111 !important; border-color:#111 !important;
 }
-/* Auto Sim → black on all colored themes */
+/* Auto Sim → black text on all colored themes */
 body.theme-blue #autoSimToggle,body.theme-green #autoSimToggle,
 body.theme-turquoise #autoSimToggle,body.theme-gold #autoSimToggle,
 body.theme-pink #autoSimToggle,body.theme-grey #autoSimToggle {
   color:#111 !important; border-color:#111 !important;
 }
-/* Place Side Bet → black on blue, green, turquoise, pink, grey */
-body.theme-blue #manualSideBetBtn,body.theme-green #manualSideBetBtn,
-body.theme-turquoise #manualSideBetBtn,body.theme-pink #manualSideBetBtn,
-body.theme-grey #manualSideBetBtn {
-  color:#111 !important; border-color:#111 !important;
-}
-/* Sit Out Spins → black on pink */
-body.theme-pink #sitOutToggle {
-  color:#111 !important; border-color:#111 !important;
-}
+/* Place Side Bet → keep purple on all */
+/* Sit Out Spins → keep red on all */
+/* Undo Last Spin → keep amber on all */
 
-/* ===== SPIN INPUT PLACEHOLDER — match Undo Last Spin color per theme ===== */
-/* White theme: brown like Undo Last Spin */
+/* SIM badge next to Balance → match the mode toggle SIM button style */
+body.theme-blue #modeBadge.sim, body.theme-green #modeBadge.sim, body.theme-turquoise #modeBadge.sim,
+body.theme-gold #modeBadge.sim, body.theme-pink #modeBadge.sim, body.theme-grey #modeBadge.sim {
+  background:#dbeafe !important; color:#1d4ed8 !important; border:2px solid #000 !important;
+}
+body.theme-blue #modeBadge.live, body.theme-green #modeBadge.live, body.theme-turquoise #modeBadge.live,
+body.theme-gold #modeBadge.live, body.theme-pink #modeBadge.live, body.theme-grey #modeBadge.live {
+  background:#fef3c7 !important; color:#92400e !important; border:2px solid #000 !important;
+}
+body.theme-blue #modeBadge.table, body.theme-green #modeBadge.table, body.theme-turquoise #modeBadge.table,
+body.theme-gold #modeBadge.table, body.theme-pink #modeBadge.table, body.theme-grey #modeBadge.table {
+  background:#f3e8ff !important; color:#6b21a8 !important; border:2px solid #000 !important;
+}
+/* Mode toggle inactive buttons → black text */
+body.theme-blue .mode-toggle button, body.theme-green .mode-toggle button, body.theme-turquoise .mode-toggle button,
+body.theme-gold .mode-toggle button, body.theme-pink .mode-toggle button, body.theme-grey .mode-toggle button {
+  color:#111 !important;
+}
+/* Mode toggle active buttons → keep their proper colors */
+body.theme-blue .mode-toggle button.active-sim,body.theme-green .mode-toggle button.active-sim,body.theme-turquoise .mode-toggle button.active-sim,
+body.theme-gold .mode-toggle button.active-sim,body.theme-pink .mode-toggle button.active-sim,body.theme-grey .mode-toggle button.active-sim { color:#1d4ed8 !important; }
+body.theme-blue .mode-toggle button.active-live,body.theme-green .mode-toggle button.active-live,body.theme-turquoise .mode-toggle button.active-live,
+body.theme-gold .mode-toggle button.active-live,body.theme-pink .mode-toggle button.active-live,body.theme-grey .mode-toggle button.active-live { color:#92400e !important; }
+body.theme-blue .mode-toggle button.active-table,body.theme-green .mode-toggle button.active-table,body.theme-turquoise .mode-toggle button.active-table,
+body.theme-gold .mode-toggle button.active-table,body.theme-pink .mode-toggle button.active-table,body.theme-grey .mode-toggle button.active-table { color:#6b21a8 !important; }
+
+/* --- SPIN INPUT PLACEHOLDER — brown on all themes --- */
 body.theme-white #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Blue theme */
-body.theme-blue #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Green theme */
-body.theme-green #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Turquoise theme */
-body.theme-turquoise #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Gold theme */
-body.theme-gold #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Pink theme */
-body.theme-pink #spinInput::placeholder { color:#b45309; opacity:1; }
-/* Grey theme */
-body.theme-grey #spinInput::placeholder { color:#b45309; opacity:1; }
+body.theme-blue #spinInput::placeholder,body.theme-green #spinInput::placeholder,
+body.theme-turquoise #spinInput::placeholder,body.theme-gold #spinInput::placeholder,
+body.theme-pink #spinInput::placeholder,body.theme-grey #spinInput::placeholder { color:#b45309; opacity:1; }
 
-/* ===== UNDO LAST SPIN — black border on Gold and Grey ===== */
-body.theme-gold #rollbackBtn { border-color:#111 !important; }
-body.theme-grey #rollbackBtn { border-color:#111 !important; }
+/* --- WHITE THEME: black borders on controls --- */
+body.theme-white #spinInput { border-color:#111 !important; }
+body.theme-white #randomSpin { border-color:#111 !important; }
+body.theme-white #rollbackBtn { border-color:#111 !important; }
+body.theme-white #resetSession { border-color:#111 !important; }
+body.theme-white #exportCsv { border-color:#111 !important; }
+body.theme-white #resetHist { border-color:#111 !important; }
+body.theme-white #autoSimToggle { border-color:#111 !important; }
+body.theme-white #autoSimSpeed { border-color:#111 !important; }
+body.theme-white #startBank { border-color:#111 !important; }
+body.theme-white #unit { border-color:#111 !important; }
+body.theme-white #tableType { border-color:#111 !important; }
+body.theme-white #bgSelect { border-color:#111 !important; }
+body.theme-white #modeBadge { border-color:#111 !important; }
 
-/* ===== CLEAR SAVED APP STATE — black border on Grey ===== */
-body.theme-grey #clearSavedState { border-color:#111 !important; }
+/* ===== PER-THEME SECTION HEADER ACCENT COLORS =====
+   Blue/Green/Turquoise → blue (#1d4ed8)
+   Gold → orange (#c2410c)
+   Pink → purple (#7e22ce)
+   Grey → blue (#1d4ed8)
+*/
+
+/* BLUE / GREEN / TURQUOISE / GREY: section headers → blue */
+body.theme-blue label, body.theme-green label, body.theme-turquoise label, body.theme-grey label {
+  color:#1d4ed8 !important;
+}
+/* GOLD: section headers → orange */
+body.theme-gold label {
+  color:#c2410c !important;
+}
+/* PINK: section headers → purple */
+body.theme-pink label {
+  color:#7e22ce !important;
+}
+
+/* Threshold badges per theme */
+/* Blue/Green/Turquoise: white text, black border */
+body.theme-blue .threshold-badge, body.theme-green .threshold-badge, body.theme-turquoise .threshold-badge {
+  border-color:#111 !important; color:#fff !important;
+}
+/* Gold: red text, black border */
+body.theme-gold .threshold-badge {
+  border-color:#111 !important; color:#ef4444 !important;
+}
+/* Pink: red text, black border */
+body.theme-pink .threshold-badge {
+  border-color:#111 !important; color:#ef4444 !important;
+}
+/* Grey: blue text, black border */
+body.theme-grey .threshold-badge {
+  border-color:#111 !important; color:#1d4ed8 !important;
+}
 
 /* ===== THRESHOLD BADGES (Strategy Mode) ===== */
 .threshold-badge{padding:8px 12px;border-radius:8px;font-size:14px;font-weight:700;text-align:center;border:2px solid transparent;opacity:0.3;transition:all .3s}
@@ -1725,32 +1897,16 @@ $('zeCancel').onclick=()=>{$('zeroEditModal').style.display='none';};
 function refresh(){
   $('currentBalance').textContent=fmt(state.balance);
   $('stickyBal').textContent=fmt(state.balance);
+  // Set theme class FIRST so all theme checks work correctly
+  document.body.className='theme-'+state.theme;
+
   $('sumStart').textContent=fmt(state.bank);
   const sessionPL=state.balance-state.bank;
   $('sumSession').textContent=fmt(sessionPL);
-  const isDark=document.body.classList.contains('theme-dark');
-  const isGrey=document.body.classList.contains('theme-grey');
-  const coloredTheme=['theme-blue','theme-green','theme-turquoise','theme-gold','theme-pink'].some(t=>document.body.classList.contains(t));
-  // Dark mode: green/red as normal. Grey: black for zeros, green/red for non-zero. Other colored: always #111.
-  if(isDark){
-    $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
-  } else if(isGrey){
-    $('sumSession').style.color=sessionPL===0?'#111':(sessionPL>0?'var(--win)':'var(--lose)');
-  } else if(coloredTheme){
-    $('sumSession').style.color='#111';
-  } else {
-    $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
-  }
+  // ALL themes: proper green/red P/L colors
+  $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
   $('sumHist').textContent=fmt(state.histPL);
-  if(isDark){
-    $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
-  } else if(isGrey){
-    $('sumHist').style.color=state.histPL===0?'#111':(state.histPL>0?'var(--win)':'var(--lose)');
-  } else if(coloredTheme){
-    $('sumHist').style.color='#111';
-  } else {
-    $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
-  }
+  $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
 
   // V10: Mode badge (3 modes)
   const mb=$('modeBadge');
@@ -1808,8 +1964,6 @@ function refresh(){
   $('sz0').textContent='0: '+fmt(state.bet0);
   $('sz00').textContent='00: '+fmt(state.bet00);
   $('szSplit').textContent='Spl: '+fmt(state.betSplit);
-
-  document.body.className='theme-'+state.theme;
 
   // Strategy mode: hide zero boxes, uniform bet bar, auto-increment, spin counter
   const isStratMode=state.strategyMode&&state.strategyMode!=='original';
