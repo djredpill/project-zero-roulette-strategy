@@ -61,12 +61,12 @@
 /* ===== 8 THEMES ===== */
 body.theme-white      { background:#f8f9fa; color:var(--text-dark) }
 body.theme-dark       { background:#1a1a2e; color:#e0e0e0; --card-bg:rgba(255,255,255,0.07); --muted:#94a3b8 }
-body.theme-blue       { background:#5a8bbf; color:#f0f5fb; --card-bg:rgba(255,255,255,0.12); --muted:#c5d8eb }
-body.theme-green      { background:#5a9a72; color:#e8f5ec; --card-bg:rgba(255,255,255,0.12); --muted:#b5d6c2 }
-body.theme-turquoise  { background:#4daaa2; color:#e0faf6; --card-bg:rgba(255,255,255,0.12); --muted:#8cf0e4 }
-body.theme-gold       { background:#aa8d4b; color:#fef8e0; --card-bg:rgba(255,255,255,0.12); --muted:#e0c06a }
-body.theme-pink       { background:#aa5d9a; color:#fdf0f5; --card-bg:rgba(255,255,255,0.12); --muted:#e8b0d8 }
-body.theme-grey       { background:#7a8588; color:#edf1f3; --card-bg:rgba(255,255,255,0.12); --muted:#c8d1d5 }
+body.theme-blue       { background:#7ba8d4; color:#f0f5fb; --card-bg:rgba(255,255,255,0.14); --muted:#d0e0f0 }
+body.theme-green      { background:#7bb892; color:#e8f5ec; --card-bg:rgba(255,255,255,0.14); --muted:#c5e0d0 }
+body.theme-turquoise  { background:#72c4bc; color:#e0faf6; --card-bg:rgba(255,255,255,0.14); --muted:#a0f0e8 }
+body.theme-gold       { background:#c4a96b; color:#fef8e0; --card-bg:rgba(255,255,255,0.14); --muted:#e8d090 }
+body.theme-pink       { background:#c47db4; color:#fdf0f5; --card-bg:rgba(255,255,255,0.14); --muted:#f0c8e4 }
+body.theme-grey       { background:#98a0a3; color:#edf1f3; --card-bg:rgba(255,255,255,0.14); --muted:#d4dce0 }
 
 /* Dark theme overrides for inputs/buttons */
 body.theme-dark input, body.theme-dark select,
@@ -196,12 +196,12 @@ body.flash-lose-urgent{animation:flashRedUrgent .3s linear}
 .sticky-header{display:block;position:sticky;top:0;z-index:999;backdrop-filter:blur(8px);padding:6px 14px;border-bottom:1px solid rgba(0,0,0,0.08)}
 body.theme-white .sticky-header{background:rgba(248,249,250,0.95)}
 body.theme-dark .sticky-header{background:rgba(26,26,46,0.95)}
-body.theme-blue .sticky-header{background:rgba(90,139,191,0.95)}
-body.theme-green .sticky-header{background:rgba(90,154,114,0.95)}
-body.theme-turquoise .sticky-header{background:rgba(77,170,162,0.95)}
-body.theme-gold .sticky-header{background:rgba(170,141,75,0.95)}
-body.theme-pink .sticky-header{background:rgba(170,93,154,0.95)}
-body.theme-grey .sticky-header{background:rgba(122,133,136,0.95)}
+body.theme-blue .sticky-header{background:rgba(123,168,212,0.95)}
+body.theme-green .sticky-header{background:rgba(123,184,146,0.95)}
+body.theme-turquoise .sticky-header{background:rgba(114,196,188,0.95)}
+body.theme-gold .sticky-header{background:rgba(196,169,107,0.95)}
+body.theme-pink .sticky-header{background:rgba(196,125,180,0.95)}
+body.theme-grey .sticky-header{background:rgba(152,160,163,0.95)}
 
 .sticky-bal-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;flex-wrap:wrap;gap:4px}
 .sticky-zeros{display:flex;gap:4px;margin-top:4px}
@@ -398,10 +398,37 @@ body.theme-dark .mode-toggle,body.theme-blue .mode-toggle,body.theme-green .mode
   border-radius:8px; margin-bottom:10px; font-size:13px; color:#1e40af; font-weight:600;
   text-align:center; line-height:1.5;
 }
-body.theme-dark #strategyPromptBar,body.theme-blue #strategyPromptBar,body.theme-green #strategyPromptBar,
+body.theme-dark #strategyPromptBar {
+  background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.4); color:#93c5fd;
+}
+body.theme-blue #strategyPromptBar,body.theme-green #strategyPromptBar,
 body.theme-turquoise #strategyPromptBar,body.theme-gold #strategyPromptBar,body.theme-pink #strategyPromptBar,
 body.theme-grey #strategyPromptBar {
-  background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.4); color:#93c5fd;
+  background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.4); color:#111;
+}
+
+/* ===== TEXT COLOR OVERRIDES FOR COLORED THEMES ===== */
+/* Leave Casino → black on all colored themes */
+body.theme-blue #leaveCasinoBtn,body.theme-green #leaveCasinoBtn,
+body.theme-turquoise #leaveCasinoBtn,body.theme-gold #leaveCasinoBtn,
+body.theme-pink #leaveCasinoBtn,body.theme-grey #leaveCasinoBtn {
+  color:#111 !important; border-color:#111 !important;
+}
+/* Auto Sim → black on all colored themes */
+body.theme-blue #autoSimToggle,body.theme-green #autoSimToggle,
+body.theme-turquoise #autoSimToggle,body.theme-gold #autoSimToggle,
+body.theme-pink #autoSimToggle,body.theme-grey #autoSimToggle {
+  color:#111 !important; border-color:#111 !important;
+}
+/* Place Side Bet → black on blue, green, turquoise, pink, grey */
+body.theme-blue #manualSideBetBtn,body.theme-green #manualSideBetBtn,
+body.theme-turquoise #manualSideBetBtn,body.theme-pink #manualSideBetBtn,
+body.theme-grey #manualSideBetBtn {
+  color:#111 !important; border-color:#111 !important;
+}
+/* Sit Out Spins → black on pink */
+body.theme-pink #sitOutToggle {
+  color:#111 !important; border-color:#111 !important;
 }
 
 /* ===== THRESHOLD BADGES (Strategy Mode) ===== */
@@ -1678,9 +1705,10 @@ function refresh(){
   $('sumStart').textContent=fmt(state.bank);
   const sessionPL=state.balance-state.bank;
   $('sumSession').textContent=fmt(sessionPL);
-  $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
+  const coloredTheme=['theme-blue','theme-green','theme-turquoise','theme-gold','theme-pink','theme-grey'].some(t=>document.body.classList.contains(t));
+  $('sumSession').style.color=coloredTheme?'#111':(sessionPL>=0?'var(--win)':'var(--lose)');
   $('sumHist').textContent=fmt(state.histPL);
-  $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
+  $('sumHist').style.color=coloredTheme?'#111':(state.histPL>=0?'var(--win)':'var(--lose)');
 
   // V10: Mode badge (3 modes)
   const mb=$('modeBadge');
@@ -2131,7 +2159,8 @@ function _showLeaveReportInner(){
   `;
 
   $('leaveTitle').textContent=isProfit?'Winner! \u2014 Session Report':'Session Report';
-  $('leaveTitle').style.color=isProfit?'#16a34a':'#ef4444';
+  const cTheme=['theme-blue','theme-green','theme-turquoise','theme-gold','theme-pink','theme-grey'].some(t=>document.body.classList.contains(t));
+  $('leaveTitle').style.color=cTheme?'#111':(isProfit?'#16a34a':'#ef4444');
   $('leaveReport').innerHTML=report;
   $('leaveEmail').value=state.defaultEmail||'';
   // Pause auto sim
