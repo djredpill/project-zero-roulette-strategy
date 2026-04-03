@@ -399,30 +399,57 @@ body.theme-dark .mode-toggle,body.theme-blue .mode-toggle,body.theme-green .mode
 }
 #strategy-overlay h2 { margin:0 0 8px; font-size:22px; color:#fff; }
 #strategy-overlay .subtitle { font-size:13px; color:#94a3b8; margin-bottom:20px; }
+.strategy-grid-top {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;
+  width:100%; max-width:520px; margin-bottom:10px;
+}
+.strategy-grid-bottom {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  width:100%; max-width:348px; margin-bottom:0;
+}
 .strategy-card {
-  width:100%; max-width:380px; padding:18px; border-radius:12px; margin-bottom:12px;
+  padding:14px; border-radius:12px;
   cursor:pointer; transition:all .2s; border:2px solid transparent; text-align:left;
 }
 .strategy-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
-.strategy-card h3 { margin:0 0 4px; font-size:17px; }
-.strategy-card .tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:700; margin-bottom:8px; }
-.strategy-card p { margin:0; font-size:12px; line-height:1.5; color:#ccc; }
-.sc-aggressive { background:#1e293b; }
-.sc-aggressive:hover { border-color:#ef4444; }
-.sc-aggressive h3 { color:#ef4444; }
-.sc-aggressive .tag { background:#ef4444; color:#fff; }
-.sc-controlled { background:#1e293b; }
-.sc-controlled:hover { border-color:#f59e0b; }
-.sc-controlled h3 { color:#f59e0b; }
-.sc-controlled .tag { background:#f59e0b; color:#000; }
-.sc-conservative { background:#1e293b; }
-.sc-conservative:hover { border-color:#22c55e; }
-.sc-conservative h3 { color:#22c55e; }
-.sc-conservative .tag { background:#22c55e; color:#000; }
-.sc-original { background:#1e293b; }
-.sc-original:hover { border-color:#3b82f6; }
-.sc-original h3 { color:#3b82f6; }
-.sc-original .tag { background:#3b82f6; color:#fff; }
+.strategy-card h3 { margin:0 0 4px; font-size:14px; }
+.strategy-card .tag { display:inline-block; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:700; margin-bottom:6px; }
+.strategy-card .win-rate { display:block; font-size:18px; font-weight:800; margin-bottom:4px; }
+.strategy-card p { margin:0; font-size:11px; line-height:1.4; }
+/* Green - #1 Steady Eddie */
+.sc-green { background:rgba(22,163,74,0.15); border-color:rgba(22,163,74,0.4); }
+.sc-green:hover { border-color:#22c55e; box-shadow:0 8px 20px rgba(22,163,74,0.3); }
+.sc-green h3 { color:#22c55e; }
+.sc-green .win-rate { color:#22c55e; }
+.sc-green .tag { background:#22c55e; color:#000; }
+.sc-green p { color:#bbf7d0; }
+/* Yellow - #2 Delayed Surge */
+.sc-yellow { background:rgba(234,179,8,0.15); border-color:rgba(234,179,8,0.4); }
+.sc-yellow:hover { border-color:#eab308; box-shadow:0 8px 20px rgba(234,179,8,0.3); }
+.sc-yellow h3 { color:#eab308; }
+.sc-yellow .win-rate { color:#eab308; }
+.sc-yellow .tag { background:#eab308; color:#000; }
+.sc-yellow p { color:#fef9c3; }
+/* Orange - #3 Slow Grind */
+.sc-orange { background:rgba(249,115,22,0.15); border-color:rgba(249,115,22,0.4); }
+.sc-orange:hover { border-color:#f97316; box-shadow:0 8px 20px rgba(249,115,22,0.3); }
+.sc-orange h3 { color:#f97316; }
+.sc-orange .win-rate { color:#f97316; }
+.sc-orange .tag { background:#f97316; color:#fff; }
+.sc-orange p { color:#fed7aa; }
+/* Red - #4 Streak Reset */
+.sc-red { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.4); }
+.sc-red:hover { border-color:#ef4444; box-shadow:0 8px 20px rgba(239,68,68,0.3); }
+.sc-red h3 { color:#ef4444; }
+.sc-red .win-rate { color:#ef4444; }
+.sc-red .tag { background:#ef4444; color:#fff; }
+.sc-red p { color:#fecaca; }
+/* Blue - Legacy Mode */
+.sc-blue { background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.4); }
+.sc-blue:hover { border-color:#3b82f6; box-shadow:0 8px 20px rgba(59,130,246,0.3); }
+.sc-blue h3 { color:#3b82f6; }
+.sc-blue .tag { background:#3b82f6; color:#fff; }
+.sc-blue p { color:#bfdbfe; }
 
 /* ===== STRATEGY PROMPT BAR ===== */
 #strategyPromptBar {
@@ -720,25 +747,38 @@ body.theme-grey .threshold-badge {
 <div id="strategy-overlay">
   <h2>Choose Your Strategy</h2>
   <div class="subtitle">Select how you want to play this session</div>
-  <div class="strategy-card sc-aggressive" onclick="selectStrategy('sitandclimb')">
-    <h3>Sit and Climb</h3>
-    <span class="tag">AGGRESSIVE</span>
-    <p>Start at $2 per zero. After every spin, add $1 to each bet. No cap. When a zero hits, collect your payout, sit out 17 spins, then reset to $2. Highest risk, highest reward.</p>
+  <div class="strategy-grid-top">
+    <div class="strategy-card sc-green" onclick="selectStrategy('steadyeddie')">
+      <span class="win-rate">49.5%</span>
+      <h3>Steady Eddie</h3>
+      <span class="tag">CONSERVATIVE</span>
+      <p>Flat $2/$2/$2 every spin. No escalation. Sit out 17 after a zero hit. Lowest volatility.</p>
+    </div>
+    <div class="strategy-card sc-yellow" onclick="selectStrategy('delayedsurge')">
+      <span class="win-rate">45.2%</span>
+      <h3>Delayed Surge</h3>
+      <span class="tag">MODERATE</span>
+      <p>Hold flat $2/$2/$2 for 10 spins, then +$1 every 3 spins. Patience before power.</p>
+    </div>
+    <div class="strategy-card sc-orange" onclick="selectStrategy('slowgrind')">
+      <span class="win-rate">43.8%</span>
+      <h3>Slow Grind</h3>
+      <span class="tag">MODERATE</span>
+      <p>+$1 every 6 spins from the start. Gradual climb with controlled exposure.</p>
+    </div>
   </div>
-  <div class="strategy-card sc-controlled" onclick="selectStrategy('escalateandcap')">
-    <h3>Escalate and Cap</h3>
-    <span class="tag">CONTROLLED</span>
-    <p>Same as Sit and Climb, but bets cap at $15 per zero ($45/spin max). The cap protects you from over-exposure during long dry spells while still giving solid payouts.</p>
-  </div>
-  <div class="strategy-card sc-conservative" onclick="selectStrategy('steadyeddie')">
-    <h3>Steady Eddie</h3>
-    <span class="tag">CONSERVATIVE</span>
-    <p>Flat $2 per zero, every spin, no escalation. Sit out 17 after a zero hit. Lowest volatility, longest sessions. For the player with time to kill who doesn't mind extended sessions.</p>
-  </div>
-  <div class="strategy-card sc-original" onclick="selectStrategy('original')">
-    <h3>Legacy Mode</h3>
-    <span class="tag">CLASSIC</span>
-    <p>Place your own bets however you want. Full control, no strategy guidance. The classic Project Zero Roulette experience.</p>
+  <div class="strategy-grid-bottom">
+    <div class="strategy-card sc-red" onclick="selectStrategy('streakreset')">
+      <span class="win-rate">42.5%</span>
+      <h3>Streak Reset</h3>
+      <span class="tag">AGGRESSIVE</span>
+      <p>Flat $2/$2/$2 with a temporary $5/$5/$5 boost after 12-spin dry streak.</p>
+    </div>
+    <div class="strategy-card sc-blue" onclick="selectStrategy('original')">
+      <h3>Legacy Mode</h3>
+      <span class="tag">CLASSIC</span>
+      <p>Place your own bets however you want. Full control, no strategy guidance.</p>
+    </div>
   </div>
 </div>
 
@@ -1285,7 +1325,8 @@ let state = {
   // Manual side bet state
   msbType:null, msbValue:null,
   // Strategy mode state
-  strategyMode:null, // 'sitandclimb','escalateandcap','steadyeddie','original',null
+  strategyMode:null, // 'steadyeddie','delayedsurge','slowgrind','streakreset','original',null
+  streakResetBoosted:false, // for Streak Reset: true when in $5 boost mode
   strategySpinsSinceZero:0, // count spins since last zero (for escalation)
   overrideTriggered:false, // true if user overrode threshold and flipped to original
   threshold1Hit:false,
@@ -2856,8 +2897,11 @@ function selectStrategy(strategy){
     state.betSplit=STRATEGY_BASE_BET;
     $('startBank').value=1500;
     $('unit').value=STRATEGY_BASE_BET;
-    // Hide Steady Eddie's Threshold 2 badge
-    if(strategy==='steadyeddie'){
+    // Reset streak reset boost state
+    state.streakResetBoosted=false;
+    // Steady Eddie and Streak Reset use single threshold (20% hard stop)
+    // Delayed Surge and Slow Grind use dual thresholds (20% warn, 33% stop)
+    if(strategy==='steadyeddie'||strategy==='streakreset'){
       $('thBadge2').style.display='none';
     }else{
       $('thBadge2').style.display='';
@@ -2885,13 +2929,26 @@ function updateStrategyPrompt(){
   const b=state.bet0;
   const total=state.bet0+state.bet00+state.betSplit;
   if(sm==='steadyeddie'){
-    bar.innerHTML='\u2714 <strong>Place $'+STRATEGY_BASE_BET+' on 0, $'+STRATEGY_BASE_BET+' on 00, $'+STRATEGY_BASE_BET+' on split. Total: $'+(STRATEGY_BASE_BET*3)+'. Press Spin.</strong>';
-  }else if(sm==='sitandclimb'||sm==='escalateandcap'){
-    const cap=(sm==='escalateandcap')?STRATEGY_CAP:null;
-    if(cap&&b>=cap){
-      bar.innerHTML='\u26A0 <strong>Bets at maximum. Place $'+cap+' on 0, $'+cap+' on 00, $'+cap+' on split. Total: $'+(cap*3)+'. Press Spin.</strong>';
+    bar.innerHTML='\u2714 <strong>Steady Eddie: Place $'+STRATEGY_BASE_BET+' on 0, $'+STRATEGY_BASE_BET+' on 00, $'+STRATEGY_BASE_BET+' on split. Total: $'+(STRATEGY_BASE_BET*3)+'. Press Spin.</strong>';
+  }else if(sm==='delayedsurge'){
+    const spins=state.strategySpinsSinceZero;
+    if(spins<10){
+      bar.innerHTML='\u23F3 <strong>Delayed Surge: Holding flat $'+STRATEGY_BASE_BET+'/$'+STRATEGY_BASE_BET+'/$'+STRATEGY_BASE_BET+' (spin '+(spins+1)+'/10). Surge starts after spin 10.</strong>';
     }else{
-      bar.innerHTML='\u2191 <strong>Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Press Spin.</strong>';
+      bar.innerHTML='\u2191 <strong>Delayed Surge: Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Press Spin.</strong>';
+    }
+  }else if(sm==='slowgrind'){
+    bar.innerHTML='\u2191 <strong>Slow Grind: Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Press Spin.</strong>';
+  }else if(sm==='streakreset'){
+    if(state.streakResetBoosted){
+      bar.innerHTML='\u26A1 <strong>Streak Reset: BOOSTED! Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Press Spin.</strong>';
+    }else{
+      const spinsLeft=12-state.strategySpinsSinceZero;
+      if(spinsLeft>0){
+        bar.innerHTML='\u2714 <strong>Streak Reset: Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Boost in '+spinsLeft+' spins.</strong>';
+      }else{
+        bar.innerHTML='\u2714 <strong>Streak Reset: Place $'+b+' on 0, $'+b+' on 00, $'+b+' on split. Total: $'+total+'. Press Spin.</strong>';
+      }
     }
   }
 }
@@ -2908,8 +2965,8 @@ function checkStrategyThresholds(){
   $('thBadge1').className='threshold-badge';
   $('thBadge2').className='threshold-badge';
   
-  if(sm==='steadyeddie'){
-    // Steady Eddie: Threshold 1 at 20% = HARD STOP
+  if(sm==='steadyeddie'||sm==='streakreset'){
+    // Steady Eddie & Streak Reset: Threshold 1 at 20% = HARD STOP
     if(absDiff>=0.20&&!state.threshold1Hit){
       state.threshold1Hit=true;
       $('thBadge1').className='threshold-badge '+(isWinning?'active-win':'active-loss');
@@ -2920,14 +2977,13 @@ function checkStrategyThresholds(){
       $('thBadge1').className='threshold-badge '+(isWinning?'active-win':'active-loss');
     }
   }else{
-    // Sit and Climb / Escalate and Cap: T1=20% warning, T2=33% hard stop
+    // Delayed Surge / Slow Grind: T1=20% warning, T2=33% hard stop
     if(absDiff>=0.20){
       $('thBadge1').className='threshold-badge '+(isWinning?'active-win':'active-loss');
       if(!state.threshold1Hit){
         state.threshold1Hit=true;
         flashBorder(isWinning?'win':'lose',5,600);
         if(isWinning)playWinChime();else playLossAlert(false);
-        // Warning only, no override modal
         const pct=Math.abs(diff*100).toFixed(0);
         const msg=isWinning
           ?'You are up '+pct+'% on your bankroll. You are approaching Threshold 2. You can keep going, but be careful.'
@@ -3110,21 +3166,39 @@ function handleStrategySpin(val){
     state.sitOut=STRATEGY_SITOUT;
     state.sitOutTimesUsed++;
     state.strategySpinsSinceZero=0;
+    state.streakResetBoosted=false; // reset boost flag on zero hit
   }else if(!isSit&&!zeroHit){
     // Non-zero, not sitting out: escalate bets if applicable
-    if(sm==='sitandclimb'){
-      state.bet0+=STRATEGY_INCREMENT;
-      state.bet00+=STRATEGY_INCREMENT;
-      state.betSplit+=STRATEGY_INCREMENT;
-      state.unit=state.bet0;
-    }else if(sm==='escalateandcap'){
-      const newBet=Math.min(state.bet0+STRATEGY_INCREMENT,STRATEGY_CAP);
-      state.bet0=newBet;
-      state.bet00=newBet;
-      state.betSplit=newBet;
-      state.unit=newBet;
+    if(sm==='steadyeddie'){
+      // Steady Eddie: no change, stays flat at $2/$2/$2
+    }else if(sm==='delayedsurge'){
+      // Delayed Surge: hold flat for 10 spins, then +$1 every 3 spins
+      const spins=state.strategySpinsSinceZero;
+      if(spins>10&&(spins-10)%3===0){
+        state.bet0+=STRATEGY_INCREMENT;
+        state.bet00+=STRATEGY_INCREMENT;
+        state.betSplit+=STRATEGY_INCREMENT;
+        state.unit=state.bet0;
+      }
+    }else if(sm==='slowgrind'){
+      // Slow Grind: +$1 every 6 spins from start
+      const spins=state.strategySpinsSinceZero;
+      if(spins>0&&spins%6===0){
+        state.bet0+=STRATEGY_INCREMENT;
+        state.bet00+=STRATEGY_INCREMENT;
+        state.betSplit+=STRATEGY_INCREMENT;
+        state.unit=state.bet0;
+      }
+    }else if(sm==='streakreset'){
+      // Streak Reset: flat $2/$2/$2, boost to $5/$5/$5 after 12-spin dry streak
+      if(state.strategySpinsSinceZero>=12&&!state.streakResetBoosted){
+        state.streakResetBoosted=true;
+        state.bet0=5;
+        state.bet00=5;
+        state.betSplit=5;
+        state.unit=5;
+      }
     }
-    // Steady Eddie: no change, stays flat
   }
   
   state.activeSides=[];state.pendingType=null;state.pendingValue=null;state.pendingAlerts=[];
