@@ -431,6 +431,29 @@ body.theme-pink #sitOutToggle {
   color:#111 !important; border-color:#111 !important;
 }
 
+/* ===== SPIN INPUT PLACEHOLDER — match Undo Last Spin color per theme ===== */
+/* White theme: brown like Undo Last Spin */
+body.theme-white #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Blue theme */
+body.theme-blue #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Green theme */
+body.theme-green #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Turquoise theme */
+body.theme-turquoise #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Gold theme */
+body.theme-gold #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Pink theme */
+body.theme-pink #spinInput::placeholder { color:#b45309; opacity:1; }
+/* Grey theme */
+body.theme-grey #spinInput::placeholder { color:#b45309; opacity:1; }
+
+/* ===== UNDO LAST SPIN — black border on Gold and Grey ===== */
+body.theme-gold #rollbackBtn { border-color:#111 !important; }
+body.theme-grey #rollbackBtn { border-color:#111 !important; }
+
+/* ===== CLEAR SAVED APP STATE — black border on Grey ===== */
+body.theme-grey #clearSavedState { border-color:#111 !important; }
+
 /* ===== THRESHOLD BADGES (Strategy Mode) ===== */
 .threshold-badge{padding:8px 12px;border-radius:8px;font-size:14px;font-weight:700;text-align:center;border:2px solid transparent;opacity:0.3;transition:all .3s}
 .threshold-badge.active-win{opacity:1;background:#dcfce7;border-color:#16a34a;color:#16a34a;}
@@ -1705,10 +1728,29 @@ function refresh(){
   $('sumStart').textContent=fmt(state.bank);
   const sessionPL=state.balance-state.bank;
   $('sumSession').textContent=fmt(sessionPL);
-  const coloredTheme=['theme-blue','theme-green','theme-turquoise','theme-gold','theme-pink','theme-grey'].some(t=>document.body.classList.contains(t));
-  $('sumSession').style.color=coloredTheme?'#111':(sessionPL>=0?'var(--win)':'var(--lose)');
+  const isDark=document.body.classList.contains('theme-dark');
+  const isGrey=document.body.classList.contains('theme-grey');
+  const coloredTheme=['theme-blue','theme-green','theme-turquoise','theme-gold','theme-pink'].some(t=>document.body.classList.contains(t));
+  // Dark mode: green/red as normal. Grey: black for zeros, green/red for non-zero. Other colored: always #111.
+  if(isDark){
+    $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
+  } else if(isGrey){
+    $('sumSession').style.color=sessionPL===0?'#111':(sessionPL>0?'var(--win)':'var(--lose)');
+  } else if(coloredTheme){
+    $('sumSession').style.color='#111';
+  } else {
+    $('sumSession').style.color=sessionPL>=0?'var(--win)':'var(--lose)';
+  }
   $('sumHist').textContent=fmt(state.histPL);
-  $('sumHist').style.color=coloredTheme?'#111':(state.histPL>=0?'var(--win)':'var(--lose)');
+  if(isDark){
+    $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
+  } else if(isGrey){
+    $('sumHist').style.color=state.histPL===0?'#111':(state.histPL>0?'var(--win)':'var(--lose)');
+  } else if(coloredTheme){
+    $('sumHist').style.color='#111';
+  } else {
+    $('sumHist').style.color=state.histPL>=0?'var(--win)':'var(--lose)';
+  }
 
   // V10: Mode badge (3 modes)
   const mb=$('modeBadge');
