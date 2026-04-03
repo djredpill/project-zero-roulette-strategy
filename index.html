@@ -521,15 +521,16 @@ body.theme-grey #strategyPromptBar {
 
 <!-- ===== MODE SELECTION SCREEN (after splash) ===== -->
 <div id="mode-select-overlay">
-  <h2>How would you like to play?</h2>
+  <h2 style="font-size:18px; color:#aaa; margin-bottom:6px; font-weight:400;">This is a zero-based betting strategy system.</h2>
+  <h2 style="margin-top:0;">How would you like to play?</h2>
   <div class="mode-select-grid">
-    <div class="mode-select-card msc-strategy" onclick="enterStrategyMode()">
-      <h3>Strategy Mode</h3>
-      <p>Guided betting with proven strategies. The app tells you exactly what to bet, when to sit out, and when to walk away.</p>
-    </div>
     <div class="mode-select-card msc-original" onclick="enterOriginalMode()">
       <h3>Original Mode</h3>
-      <p>Full control. Place your own bets however you want. The classic Project Zero Roulette experience.</p>
+      <p>Full control of your zero-based bets. Set your own bet increments, respond to alerts, and manage your session your way.</p>
+    </div>
+    <div class="mode-select-card msc-strategy" onclick="enterStrategyMode()">
+      <h3>Strategy Mode</h3>
+      <p>Guided zero-based betting. The system walks you through each spin with built-in stop gaps and session protection.</p>
     </div>
   </div>
 </div>
