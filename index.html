@@ -1127,13 +1127,8 @@ function getSessionAvgGap(){
       overlay.style.opacity='0';
       setTimeout(()=>{
         overlay.style.display='none';
-        // Show mode selection screen (Original vs Strategy)
-        if(!state.strategyMode){
-          showModeSelect();
-        }else{
-          const app=$('main-app-content');
-          app.style.opacity='1';app.style.visibility='visible';
-        }
+        // Always show mode selection screen (Original vs Strategy)
+        showModeSelect();
       },1500);
     },3500);
   }
