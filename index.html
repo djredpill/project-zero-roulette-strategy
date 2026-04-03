@@ -65,7 +65,7 @@ body.theme-blue       { background:#7ba8d4; color:#f0f5fb; --card-bg:rgba(255,25
 body.theme-green      { background:#7bb892; color:#e8f5ec; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
 body.theme-turquoise  { background:#72c4bc; color:#e0faf6; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
 body.theme-gold       { background:#c4a96b; color:#fef8e0; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
-body.theme-pink       { background:#c47db4; color:#fdf0f5; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
+body.theme-pink       { background:#d4a0c8; color:#fdf0f5; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
 body.theme-grey       { background:#98a0a3; color:#edf1f3; --card-bg:rgba(255,255,255,0.14); --muted:#111 }
 
 /* Dark theme: light borders for inputs/buttons */
@@ -74,6 +74,17 @@ body.theme-dark input, body.theme-dark select {
 }
 body.theme-dark .ghost {
   border-color:rgba(255,255,255,0.25); color:inherit;
+}
+/* Dark mode: white borders on mode toggle buttons */
+body.theme-dark .mode-toggle button {
+  border-color:rgba(255,255,255,0.5) !important;
+}
+body.theme-dark .mode-toggle button.active-sim { border-color:#000 !important; }
+body.theme-dark .mode-toggle button.active-live { border-color:#000 !important; }
+body.theme-dark .mode-toggle button.active-table { border-color:#000 !important; }
+/* Dark mode: threshold badges → light blue text */
+body.theme-dark .threshold-badge {
+  color:#93c5fd !important; border-color:rgba(255,255,255,0.3) !important;
 }
 /* Colored themes: semi-transparent bg, black borders, text handled in overrides section */
 body.theme-blue input, body.theme-blue select,
@@ -539,7 +550,11 @@ body.theme-pink #autoSimToggle,body.theme-grey #autoSimToggle {
 }
 /* Place Side Bet → keep purple on all */
 /* Sit Out Spins → keep red on all */
-/* Undo Last Spin → keep amber on all */
+/* Undo Last Spin → keep amber text, but black border on colored themes */
+body.theme-blue #rollbackBtn, body.theme-green #rollbackBtn, body.theme-turquoise #rollbackBtn,
+body.theme-gold #rollbackBtn, body.theme-pink #rollbackBtn, body.theme-grey #rollbackBtn {
+  border-color:#111 !important;
+}
 
 /* SIM badge next to Balance → match the mode toggle SIM button style */
 body.theme-blue #modeBadge.sim, body.theme-green #modeBadge.sim, body.theme-turquoise #modeBadge.sim,
@@ -609,9 +624,9 @@ body.theme-pink label {
 }
 
 /* Threshold badges per theme */
-/* Blue/Green/Turquoise: white text, black border */
+/* Blue/Green/Turquoise: brown text (matches Enter number placeholder), black border */
 body.theme-blue .threshold-badge, body.theme-green .threshold-badge, body.theme-turquoise .threshold-badge {
-  border-color:#111 !important; color:#fff !important;
+  border-color:#111 !important; color:#b45309 !important;
 }
 /* Gold: red text, black border */
 body.theme-gold .threshold-badge {
@@ -621,9 +636,9 @@ body.theme-gold .threshold-badge {
 body.theme-pink .threshold-badge {
   border-color:#111 !important; color:#ef4444 !important;
 }
-/* Grey: blue text, black border */
+/* Grey: brown text (matches Enter number placeholder), black border */
 body.theme-grey .threshold-badge {
-  border-color:#111 !important; color:#1d4ed8 !important;
+  border-color:#111 !important; color:#b45309 !important;
 }
 
 /* ===== THRESHOLD BADGES (Strategy Mode) ===== */
