@@ -1745,21 +1745,30 @@ function refresh(){
   const isStratMode=state.strategyMode&&state.strategyMode!=='original';
   if(isStratMode){
     $('uniformBetBar').classList.add('strategy-hidden');
-    $('zerosStrip').classList.add('strategy-hidden');
     $('autoIncSection').classList.add('strategy-hidden');
     $('spinCounterSection').classList.add('strategy-hidden');
+    // Keep zero bet boxes visible but read-only in strategy mode
+    $('zerosStrip').classList.remove('strategy-hidden');
+    document.querySelectorAll('#zerosStrip .zeroItem').forEach(el=>{
+      el.style.pointerEvents='none';
+      el.style.opacity='0.85';
+    });
     // Hide Spins: X/Y and S/Spins in sticky header
     const stickyCounterSpan=$('stickyCounter').parentElement;
     if(stickyCounterSpan)stickyCounterSpan.style.display='none';
     const stickySessionSpinsWrap=$('stickySessionSpinsWrap');
     if(stickySessionSpinsWrap)stickySessionSpinsWrap.style.display='none';
-    // Hide sticky zeros in strategy mode
-    document.querySelector('.sticky-zeros').style.display='none';
+    // Keep sticky zeros visible in strategy mode (read-only)
+    document.querySelector('.sticky-zeros').style.display='';
   }else{
     $('uniformBetBar').classList.remove('strategy-hidden');
-    $('zerosStrip').classList.remove('strategy-hidden');
     $('autoIncSection').classList.remove('strategy-hidden');
     $('spinCounterSection').classList.remove('strategy-hidden');
+    // Restore zero bet boxes to editable in original mode
+    document.querySelectorAll('#zerosStrip .zeroItem').forEach(el=>{
+      el.style.pointerEvents='';
+      el.style.opacity='';
+    });
     const stickyCounterSpan=$('stickyCounter').parentElement;
     if(stickyCounterSpan)stickyCounterSpan.style.display='';
     const stickySessionSpinsWrap2=$('stickySessionSpinsWrap');
