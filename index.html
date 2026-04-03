@@ -499,7 +499,7 @@ body.theme-grey #strategyPromptBar {
     <p>Flat $2 per zero, every spin, no escalation. Sit out 17 after a zero hit. Lowest volatility, longest sessions. For the player with time to kill who doesn't mind extended sessions.</p>
   </div>
   <div class="strategy-card sc-original" onclick="selectStrategy('original')">
-    <h3>Original Mode</h3>
+    <h3>Legacy Mode</h3>
     <span class="tag">CLASSIC</span>
     <p>Place your own bets however you want. Full control, no strategy guidance. The classic Project Zero Roulette experience.</p>
   </div>
@@ -525,7 +525,7 @@ body.theme-grey #strategyPromptBar {
   <h2 style="margin-top:0;">How would you like to play?</h2>
   <div class="mode-select-grid">
     <div class="mode-select-card msc-original" onclick="enterOriginalMode()">
-      <h3>Original Mode</h3>
+      <h3>Legacy Mode</h3>
       <p>Full control of your zero-based bets. Set your own bet increments, respond to alerts, and manage your session your way.</p>
     </div>
     <div class="mode-select-card msc-strategy" onclick="enterStrategyMode()">
@@ -754,7 +754,7 @@ body.theme-grey #strategyPromptBar {
   </div>
 </div>
 
-<!-- ===== GA WARNING MODAL (Before flipping to Original Mode) ===== -->
+<!-- ===== GA WARNING MODAL (Before flipping to Legacy Mode) ===== -->
 <div id="gaWarningModal" class="modal-overlay">
   <div class="modal-box">
     <h3 style="color:#22c55e;">Please Consider</h3>
@@ -766,7 +766,7 @@ body.theme-grey #strategyPromptBar {
       <input id="gaNewBankroll" type="number" value="1500" style="width:100%;margin-top:4px;" />
     </div>
     <div class="modal-actions">
-      <button id="gaConfirmContinue" style="background:#475569;">Continue in Original Mode</button>
+      <button id="gaConfirmContinue" style="background:#475569;">Continue in Legacy Mode</button>
       <button id="gaWalkAway" style="background:#16a34a;">Walk Away</button>
     </div>
   </div>
@@ -944,7 +944,7 @@ body.theme-grey #strategyPromptBar {
       <div style="margin-bottom:8px;"><div style="font-size:12px;">Session P/L</div><div class="big" id="sumSession">$0</div></div>
       <div style="margin-bottom:8px;"><div style="font-size:12px;">Historical P/L</div><div class="big" id="sumHist">$0</div></div>
 
-      <!-- Original Mode Alerts (shown in original mode) -->
+      <!-- Legacy Mode Alerts (shown in legacy mode) -->
       <div id="originalAlerts">
         <label style="margin-top:12px;"><strong>Loss / Win Alerts</strong></label>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
@@ -965,7 +965,7 @@ body.theme-grey #strategyPromptBar {
         </div>
       </div>
 
-      <!-- Settings section (Original Mode) / Pocketed Profits (LIVE/TABLE) -->
+      <!-- Settings section (Legacy Mode) / Pocketed Profits (LIVE/TABLE) -->
       <div id="settingsSection">
         <label style="margin-top:16px;"><strong>Settings</strong></label>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
@@ -1764,7 +1764,7 @@ function refresh(){
     $('uniformBetBar').classList.remove('strategy-hidden');
     $('autoIncSection').classList.remove('strategy-hidden');
     $('spinCounterSection').classList.remove('strategy-hidden');
-    // Restore zero bet boxes to editable in original mode
+    // Restore zero bet boxes to editable in legacy mode
     document.querySelectorAll('#zerosStrip .zeroItem').forEach(el=>{
       el.style.pointerEvents='';
       el.style.opacity='';
@@ -2598,7 +2598,7 @@ function selectStrategy(strategy){
   $('main-app-content').style.visibility='visible';
   
   if(strategy==='original'){
-    // Original mode: show original alerts, hide strategy alerts
+    // Legacy mode: show original alerts, hide strategy alerts
     $('originalAlerts').style.display='block';
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
@@ -2748,7 +2748,7 @@ $('gaWalkAway').onclick=function(){
 
 $('gaConfirmContinue').onclick=function(){
   dismissModal('gaWarningModal');
-  // Flip to Original Mode with adjusted bankroll
+  // Flip to Legacy Mode with adjusted bankroll
   const newBank=parseFloat($('gaNewBankroll').value)||state.balance;
   state.strategyMode='original';
   state.bank=newBank;
@@ -2762,7 +2762,7 @@ $('gaConfirmContinue').onclick=function(){
   state.threshold2Hit=false;
   $('startBank').value=newBank;
   $('unit').value=5;
-  // Switch UI to original mode
+  // Switch UI to legacy mode
   $('originalAlerts').style.display='block';
   $('strategyAlerts').style.display='none';
   $('strategyPromptBar').style.display='none';
