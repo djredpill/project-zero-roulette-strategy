@@ -86,6 +86,7 @@ body.theme-dark .mode-toggle button.active-table { border-color:rgba(255,255,255
 body.theme-dark .threshold-badge {
   color:#b45309 !important; border-color:rgba(255,255,255,0.3) !important;
 }
+body.theme-dark #spinInput::placeholder { color:#b45309; opacity:1; }
 /* Dark mode: white borders on zero bet boxes */
 body.theme-dark .zeroItem {
   border-color:rgba(255,255,255,0.5) !important;
@@ -158,7 +159,7 @@ header{display:flex;gap:12px;align-items:center;justify-content:space-between;fl
 label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
 input[type="number"],select,input[type="text"]{background:#fff;border:1px solid rgba(0,0,0,0.12);padding:7px 8px;border-radius:6px;width:90px;font-size:14px}
 button{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;touch-action:manipulation}
-button.ghost{background:transparent;border:1px solid rgba(0,0,0,0.12);color:var(--muted)}
+button.ghost{background:transparent;border:1px solid rgba(0,0,0,0.25);color:var(--muted)}
 button.ghost:active{background:rgba(0,0,0,0.05)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .badge{padding:5px 8px;border-radius:8px;background:rgba(0,0,0,0.03);font-size:13px;color:var(--muted);border:1px solid transparent}
@@ -169,7 +170,7 @@ button.ghost:active{background:rgba(0,0,0,0.05)}
 
 /* ===== ZERO TRIO (horizontal, sticky) ===== */
 .zeros-strip{display:flex;gap:6px;align-items:stretch;margin-bottom:8px;max-width:100%;overflow:hidden}
-.zeroItem{flex:1;padding:10px 6px;border-radius:8px;text-align:center;background:var(--card-bg);cursor:pointer;transition:box-shadow .2s;border:2px solid transparent}
+.zeroItem{flex:1;padding:10px 6px;border-radius:8px;text-align:center;background:var(--card-bg);cursor:pointer;transition:box-shadow .2s;border:2px solid rgba(0,0,0,0.2)}
 .zeroItem:hover{box-shadow:0 0 0 2px var(--accent)}
 .zeroItem .big{font-size:16px}
 .zeroItem div{font-size:10px!important}
@@ -637,6 +638,12 @@ body.theme-white #unit { border-color:#111 !important; }
 body.theme-white #tableType { border-color:#111 !important; }
 body.theme-white #bgSelect { border-color:#111 !important; }
 body.theme-white #modeBadge { border-color:#111 !important; }
+body.theme-white .threshold-badge { color:#b45309 !important; border-color:#111 !important; }
+body.theme-white .zeroItem { border-color:#111 !important; }
+body.theme-white .ghost { border-color:rgba(0,0,0,0.35) !important; }
+body.theme-white #clearSavedState { border-color:#111 !important; }
+body.theme-white #editMidSession { border-color:#111 !important; }
+body.theme-white #manualSideBetBtn { border-color:#8b5cf6 !important; }
 
 /* ===== PER-THEME SECTION HEADER ACCENT COLORS =====
    Blue/Green/Turquoise → blue (#1d4ed8)
@@ -665,7 +672,7 @@ body.theme-gold .threshold-badge, body.theme-pink .threshold-badge, body.theme-g
 }
 
 /* ===== THRESHOLD BADGES (Strategy Mode) ===== */
-.threshold-badge{padding:8px 12px;border-radius:8px;font-size:14px;font-weight:700;text-align:center;border:2px solid transparent;opacity:0.3;transition:all .3s}
+.threshold-badge{padding:8px 12px;border-radius:8px;font-size:14px;font-weight:700;text-align:center;border:2px solid rgba(0,0,0,0.2);opacity:0.3;transition:all .3s}
 .threshold-badge.active-win{opacity:1;background:#dcfce7;border-color:#16a34a;color:#16a34a;}
 .threshold-badge.active-loss{opacity:1;background:#fee2e2;border-color:#ef4444;color:#ef4444;}
 
@@ -2029,9 +2036,9 @@ function refresh(){
       el.style.pointerEvents='none';
       el.style.opacity='0.85';
     });
-    // Hide set Spins: X/Y in sticky header (but keep S/Spins session counter visible)
+    // Hide set Spins: X/Y in sticky header (but keep S/Spins session counter centered)
     const stickyCounterSpan=$('stickyCounter').parentElement;
-    if(stickyCounterSpan)stickyCounterSpan.style.display='none';
+    if(stickyCounterSpan)stickyCounterSpan.style.visibility='hidden';
     // Session spin counter stays visible in strategy mode
     const stickySessionSpinsWrap=$('stickySessionSpinsWrap');
     if(stickySessionSpinsWrap)stickySessionSpinsWrap.style.display='';
@@ -2047,7 +2054,7 @@ function refresh(){
       el.style.opacity='';
     });
     const stickyCounterSpan=$('stickyCounter').parentElement;
-    if(stickyCounterSpan)stickyCounterSpan.style.display='';
+    if(stickyCounterSpan)stickyCounterSpan.style.visibility='';
     const stickySessionSpinsWrap2=$('stickySessionSpinsWrap');
     if(stickySessionSpinsWrap2)stickySessionSpinsWrap2.style.display='';
     document.querySelector('.sticky-zeros').style.display='';
