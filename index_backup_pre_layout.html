@@ -18,12 +18,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="PZR Strategy" />
+<meta name="apple-mobile-web-app-title" content="Zero Roulette Strategy" />
 <meta name="theme-color" content="#0a0a0a" />
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-<title>Project Zero Roulette - Strategy</title>
+<title>Zero Roulette Strategy</title>
 <style>
 /* ===== SPLASH SCREEN ===== */
 #splash-overlay {
@@ -1318,24 +1318,26 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 
       <!-- Session Controls -->
       <label style="margin-top:12px;"><strong>Session Controls</strong></label>
-      <div id="sessionControlsGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
         <button id="resetSession" class="ghost" style="padding:6px 2px;font-size:10px;">Reset Session</button>
-        <button id="resetHist" class="ghost" style="padding:6px 2px;font-size:10px;">Reset Historical P/L</button>
+        <button id="resetHist" class="ghost" style="padding:6px 2px;font-size:10px;">Reset Historical</button>
         <button id="sitOutToggle" class="ghost" style="padding:6px 2px;font-size:10px;border-color:red;color:red;">Sit Out Spins</button>
         <button id="rollbackBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
+        <button id="editMidSession" class="ghost" style="padding:6px 2px;font-size:10px;display:none;">Edit Bankroll</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px;">
         <button id="clearSavedState" class="ghost" style="padding:6px 2px;font-size:10px;border:2px solid #000;">Clear Saved</button>
         <button id="manualSideBetBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#8b5cf6;color:#8b5cf6;">Place Side Bet</button>
         <button id="changeModeBtn" class="ghost" style="padding:6px 2px;font-size:10px;font-weight:700;border:2px solid #f59e0b;color:#b45309;">Change Mode</button>
         <button id="leaveCasinoBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave Casino</button>
-        <button id="exportCsv" class="ghost" style="padding:6px 2px;font-size:10px;grid-column:span 4;">Export CSV</button>
-        <button id="editMidSession" class="ghost" style="padding:6px 2px;font-size:10px;display:none;">Edit Bankroll</button>
+        <button id="exportCsv" class="ghost" style="padding:6px 2px;font-size:10px;">Export CSV</button>
       </div>
     </div>
   </aside>
 </div>
 
 <div style="text-align:right;font-size:10px;color:var(--muted);padding:16px;">
-  Project Zero Roulette — Strategy — Revision 15 — client only
+  Project Zero Roulette — Strategy — Revision 14 — client only
 </div>
 </div>
 
@@ -3525,15 +3527,11 @@ function handleStrategySwitch(targetStrategy){
     return;
   }
   
-  // Legacy mode: double confirmation with red warning + side bet warning
+  // Legacy mode: double confirmation with red warning
   if(targetStrategy==='original'){
-    var sideBetWarning='';
-    if(state.activeSides&&state.activeSides.length>0){
-      sideBetWarning='\n\n\u26A0 WARNING: You have active side bets. Switching to Legacy Mode will NOT cancel them, but you will lose strategy-based protection for managing them.';
-    }
-    appConfirm('\u26A0 Switch to Legacy Mode?','WARNING: Legacy Mode removes all strategy guidance and threshold protection. You will be fully responsible for managing your own bets.'+sideBetWarning+'\n\nAre you sure?').then(function(confirmed){
+    appConfirm('\u26A0 Switch to Legacy Mode?','WARNING: Legacy Mode removes all strategy guidance and threshold protection. You will be fully responsible for managing your own bets. This cannot be undone during this session.\n\nAre you sure?').then(function(confirmed){
       if(confirmed){
-        appConfirm('\u26A0 Final Confirmation','You are about to switch to Legacy Mode. All strategy protections will be removed. This cannot be undone during this session.\n\nAre you absolutely sure?').then(function(confirmed2){
+        appConfirm('\u26A0 Final Confirmation','You are about to switch to Legacy Mode. All strategy protections will be removed. Are you absolutely sure?').then(function(confirmed2){
           if(confirmed2){
             executeStrategySwitch(targetStrategy);
           }
