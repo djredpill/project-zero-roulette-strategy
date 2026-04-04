@@ -1,5 +1,5 @@
 <!--
-  Project Zero Roulette — Revision 13
+  Project Zero Roulette — Revision 14
   Copyright (c) 2026 James Munchman. All rights reserved.
 
   This software and its source code are the proprietary property of
@@ -1245,10 +1245,12 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
   <aside>
     <div class="card">
       <label><strong>Session Summary</strong></label>
-      <div style="margin-bottom:8px;"><div style="font-size:12px;">Session Balance</div><div class="big" id="currentBalance">$1,000</div></div>
-      <div style="margin-bottom:8px;"><div style="font-size:12px;">Starting Bankroll</div><div class="big" id="sumStart">$1,500</div></div>
-      <div style="margin-bottom:8px;"><div style="font-size:12px;">Session P/L</div><div class="big" id="sumSession">$0</div></div>
-      <div style="margin-bottom:8px;"><div style="font-size:12px;">Historical P/L</div><div class="big" id="sumHist">$0</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-bottom:8px;">
+        <div><div style="font-size:11px;">Session Balance</div><div class="big" id="currentBalance">$1,000</div></div>
+        <div><div style="font-size:11px;">Starting Bankroll</div><div class="big" id="sumStart">$1,500</div></div>
+        <div><div style="font-size:11px;">Session P/L</div><div class="big" id="sumSession">$0</div></div>
+        <div><div style="font-size:11px;">Historical P/L</div><div class="big" id="sumHist">$0</div></div>
+      </div>
 
       <div class="active-stake-bar" id="activeStakeBar" style="margin-top:8px;">
         <strong>Active Stake:</strong> <span id="activeStakeText"></span>
@@ -1314,30 +1316,28 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
         </div>
       </div>
 
-      <!-- Session Controls (moved to sidebar) -->
-      <label style="margin-top:16px;"><strong>Session Controls</strong></label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-        <button id="resetSession" class="ghost">Reset Session</button>
-        <button id="exportCsv" class="ghost">Export CSV</button>
-        <button id="resetHist" class="ghost">Reset Historical P/L</button>
-        <button id="sitOutToggle" class="ghost" style="border-color:red;color:red;">Sit Out Spins</button>
-        <button id="manualSideBetBtn" class="ghost" style="border-color:#8b5cf6;color:#8b5cf6;grid-column:span 2;">Place Side Bet</button>
-        <button id="rollbackBtn" class="ghost" style="border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
-        <button id="editMidSession" class="ghost">Edit Bankroll/Unit</button>
-        <button id="leaveCasinoBtn" class="ghost" style="grid-column:span 2;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave The Casino</button>
-        <button id="clearSavedState" class="ghost" style="grid-column:span 2;font-size:11px;border:2px solid #000;">Clear Saved App State</button>
+      <!-- Session Controls -->
+      <label style="margin-top:12px;"><strong>Session Controls</strong></label>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+        <button id="resetSession" class="ghost" style="padding:6px 2px;font-size:10px;">Reset Session</button>
+        <button id="resetHist" class="ghost" style="padding:6px 2px;font-size:10px;">Reset Historical</button>
+        <button id="sitOutToggle" class="ghost" style="padding:6px 2px;font-size:10px;border-color:red;color:red;">Sit Out Spins</button>
+        <button id="rollbackBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
+        <button id="editMidSession" class="ghost" style="padding:6px 2px;font-size:10px;display:none;">Edit Bankroll</button>
       </div>
-
-      <!-- Change Mode Button -->
-      <div id="changeModeSection" style="margin-top:12px;">
-        <button id="changeModeBtn" class="ghost" style="width:100%;padding:14px;font-size:15px;font-weight:700;border:3px solid #f59e0b;color:#b45309;border-radius:10px;cursor:pointer;">Change Mode</button>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:4px;">
+        <button id="clearSavedState" class="ghost" style="padding:6px 2px;font-size:10px;border:2px solid #000;">Clear Saved</button>
+        <button id="manualSideBetBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#8b5cf6;color:#8b5cf6;">Place Side Bet</button>
+        <button id="changeModeBtn" class="ghost" style="padding:6px 2px;font-size:10px;font-weight:700;border:2px solid #f59e0b;color:#b45309;">Change Mode</button>
+        <button id="leaveCasinoBtn" class="ghost" style="padding:6px 2px;font-size:10px;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave Casino</button>
+        <button id="exportCsv" class="ghost" style="padding:6px 2px;font-size:10px;">Export CSV</button>
       </div>
     </div>
   </aside>
 </div>
 
 <div style="text-align:right;font-size:10px;color:var(--muted);padding:16px;">
-  Project Zero Roulette — Strategy — Revision 13 — client only
+  Project Zero Roulette — Strategy — Revision 14 — client only
 </div>
 </div>
 
@@ -3026,8 +3026,8 @@ function selectStrategy(strategy){
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
     // Hide Change Mode button for clean legacy look
-    var changeModeSection=$('changeModeSection');
-    if(changeModeSection) changeModeSection.style.display='none';
+    var changeModeBtn=$('changeModeBtn');
+    if(changeModeBtn) changeModeBtn.style.display='none';
     // Show legacy settings
     $('editMidSession').style.display='';
     $('uniformBetBar').classList.remove('strategy-hidden');
@@ -3498,12 +3498,9 @@ function updateStrategySwitchButtons(){
       changeModeBtn.textContent='Change Mode ('+name+')';
     }
   }
-  // Hide Change Mode section in Legacy mode (user selected Legacy from initial overlay)
-  var changeModeSection=$('changeModeSection');
-  if(changeModeSection){
-    // Only show if we're in strategy app (always show - user can switch back)
-    changeModeSection.style.display='';
-  }
+  // Show Change Mode button (always show - user can switch back)
+  var changeModeBtn2=$('changeModeBtn');
+  if(changeModeBtn2) changeModeBtn2.style.display='';
 }
 
 // Change Mode button opens the modal with flashing buttons
