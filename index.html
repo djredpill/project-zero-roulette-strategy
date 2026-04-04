@@ -18,12 +18,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Project Zero Strategy" />
+<meta name="apple-mobile-web-app-title" content="Zero Roulette Strategy" />
 <meta name="theme-color" content="#0a0a0a" />
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-<title>Project Zero Strategy</title>
+<title>Zero Roulette Strategy</title>
 <style>
 /* ===== SPLASH SCREEN ===== */
 #splash-overlay {
@@ -194,7 +194,7 @@ button.ghost:active{background:rgba(0,0,0,0.05)}
 .pattern-overlay-actions button{padding:8px 4px;font-size:12px;border-radius:6px}
 
 /* ===== MODAL OVERLAY ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:10002;display:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;justify-content:center;align-items:center;z-index:10002;display:none}
 .modal-box{background:#fff;border-radius:12px;padding:20px;width:90%;max-width:460px;box-shadow:0 10px 30px rgba(0,0,0,0.25);max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-box h3{margin:0 0 12px;font-size:18px}
 .modal-box .modal-actions{display:flex;gap:8px;margin-top:16px}
@@ -687,15 +687,21 @@ body.theme-gold .threshold-badge, body.theme-pink .threshold-badge, body.theme-g
 
 /* ===== STRATEGY SWITCH BUTTONS ===== */
 .strategy-switch-section { margin-top:12px; }
-.strategy-switch-note { font-size:11px; color:var(--muted); text-align:center; margin-bottom:8px; line-height:1.4; font-style:italic; }
-.strategy-switch-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
-.strategy-switch-btn { padding:8px 6px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; border:2px solid; background:transparent; transition:all .15s; text-align:center; }
-.strategy-switch-btn.active-strategy { opacity:0.6; cursor:default; }
-.ssb-green { color:#16a34a; border-color:#16a34a; }
-.ssb-yellow { color:#b45309; border-color:#eab308; }
-.ssb-orange { color:#ea580c; border-color:#f97316; }
-.ssb-red { color:#ef4444; border-color:#ef4444; }
-.ssb-blue { color:#3b82f6; border-color:#3b82f6; }
+.strategy-switch-note { font-size:14px; color:#111; text-align:center; margin-bottom:10px; line-height:1.5; font-style:italic; font-weight:600; }
+.strategy-switch-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.strategy-switch-btn { padding:18px 14px; border-radius:10px; font-size:17px; font-weight:900; cursor:pointer; border:3px solid; background:transparent; transition:all .15s; text-align:center; letter-spacing:0.3px; }
+.strategy-switch-btn.active-strategy { opacity:0.7; cursor:default; }
+/* Flash/pulse animation for strategy switch section until session starts */
+@keyframes strategyFlash { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.strategy-switch-section.flashing .strategy-switch-note,
+.strategy-switch-section.flashing .strategy-switch-btn { animation:strategyFlash 1.5s ease-in-out infinite; }
+.strategy-switch-section.no-flash .strategy-switch-note,
+.strategy-switch-section.no-flash .strategy-switch-btn { animation:none; opacity:1; }
+.ssb-green { color:#0d6b2e; border-color:#16a34a; }
+.ssb-yellow { color:#8a3f00; border-color:#d97706; }
+.ssb-orange { color:#b34200; border-color:#ea580c; }
+.ssb-red { color:#c81e1e; border-color:#ef4444; }
+.ssb-blue { color:#1e4fc2; border-color:#3b82f6; }
 body.theme-dark .strategy-switch-note { color:#94a3b8; }
 body.theme-dark .ssb-green { color:#4ade80; border-color:#4ade80; }
 body.theme-dark .ssb-yellow { color:#fbbf24; border-color:#fbbf24; }
@@ -2570,6 +2576,9 @@ $('startSession').onclick=()=>{
   }else{
     doResetSession(true);
   }
+  // Stop flashing once session starts
+  const ssSection=$('strategySwitchSection');
+  if(ssSection){ssSection.classList.remove('flashing');ssSection.classList.add('no-flash');}
 };
 
 $('placeSpin').onclick=()=>{if($('spinInput').value!==''){handleSpin($('spinInput').value);$('spinInput').value='';}};
@@ -2831,7 +2840,24 @@ function msbUpdateOutcome(){
   body.innerHTML=html2;
 }
 
-$('manualSideBetBtn').onclick=openManualSideBet;
+$('manualSideBetBtn').onclick=function(){
+  // In strategy mode (not legacy), show warning flow
+  if(state.strategyMode && state.strategyMode!=='original'){
+    appConfirm('Side Bets Disabled in Strategy Mode','Placing side bets will override your current strategy\'s bet structure and may significantly impact your expected outcomes.\n\nDo you want to continue anyway?').then(function(ok){
+      if(ok){
+        // Second confirmation with 3 options — use correct element IDs
+        $('gmTitle').textContent='Are you sure?';
+        $('gmMessage').innerHTML='Your session will no longer follow the active strategy. Results may differ significantly from projected win rates.';
+        $('genericModal').querySelector('.modal-actions').innerHTML='<button onclick="dismissModal(\'genericModal\');openManualSideBet();" style="background:#8b5cf6;color:#fff;padding:10px 14px;border-radius:8px;font-weight:700;border:none;cursor:pointer;">Place Side Bet</button>'+
+          '<button onclick="dismissModal(\'genericModal\');handleStrategySwitch(\'original\');" style="background:#3b82f6;color:#fff;padding:10px 14px;border-radius:8px;font-weight:700;border:none;cursor:pointer;">Switch to Legacy</button>'+
+          '<button class="ghost" onclick="dismissModal(\'genericModal\');" style="padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer;">Go Back</button>';
+        queueModal('genericModal');
+      }
+    });
+  }else{
+    openManualSideBet();
+  }
+};
 $('msbKeepZeros').onclick=()=>{
   if(!msbSelectedType||!msbSelectedValue){alert('Select a bet type and value first.');return;}
   const amt=parseFloat($('msbAmount').value)||0;
@@ -2958,10 +2984,23 @@ function selectStrategy(strategy){
   $('main-app-content').style.visibility='visible';
   
   if(strategy==='original'){
-    // Legacy mode: show original alerts, hide strategy alerts
+    // Legacy mode: show original alerts, hide strategy alerts, hide all strategy UI
     $('originalAlerts').style.display='block';
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
+    // Hide strategy switch buttons for clean legacy look
+    var ssSection=$('strategySwitchSection');
+    if(ssSection) ssSection.style.display='none';
+    // Show legacy settings
+    $('editMidSession').style.display='';
+    $('uniformBetBar').classList.remove('strategy-hidden');
+    $('autoIncSection').classList.remove('strategy-hidden');
+    $('spinCounterSection').classList.remove('strategy-hidden');
+    // Make zero bet boxes editable
+    document.querySelectorAll('#zerosStrip .zeroItem').forEach(function(el){
+      el.style.pointerEvents='';
+      el.style.opacity='';
+    });
   }else{
     // Strategy mode: hide original alerts, show strategy alerts
     $('originalAlerts').style.display='none';
@@ -3396,6 +3435,12 @@ const STRATEGY_DESCRIPTIONS={
 };
 
 function updateStrategySwitchButtons(){
+  // Add flashing class if session hasn't started yet
+  const ssSection=$('strategySwitchSection');
+  if(ssSection && !state.sessionStarted){
+    ssSection.classList.add('flashing');
+    ssSection.classList.remove('no-flash');
+  }
   const sm=state.strategyMode;
   ['steadyeddie','delayedsurge','slowgrind','streakreset','original'].forEach(function(key){
     const btnId=key==='steadyeddie'?'sswSteadyEddie':key==='delayedsurge'?'sswDelayedSurge':key==='slowgrind'?'sswSlowGrind':key==='streakreset'?'sswStreakReset':'sswLegacy';
@@ -3461,13 +3506,16 @@ function executeStrategySwitch(targetStrategy){
   state.sitOut=0;
   
   if(targetStrategy==='original'){
-    // Switch to legacy mode
+    // Switch to legacy mode — hide all strategy-specific UI
     state.unit=5;
     state.bet0=5;state.bet00=5;state.betSplit=5;
     $('originalAlerts').style.display='block';
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
     $('editMidSession').style.display='';
+    // Hide strategy switch buttons and strategy-specific elements
+    var ssSection=$('strategySwitchSection');
+    if(ssSection) ssSection.style.display='none';
   }else{
     // Switch to a strategy mode
     state.unit=STRATEGY_BASE_BET;
@@ -3537,8 +3585,8 @@ updateStrategySwitchButtons();
   const splashEl=$('splash-overlay');
   if(splashEl && splashEl.style.display!=='none'){
     const msgDiv=document.createElement('div');
-    msgDiv.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.92);color:#fff;padding:24px 28px;border-radius:12px;z-index:100000;text-align:center;font-size:15px;line-height:1.6;max-width:340px;border:1px solid #333;';
-    msgDiv.innerHTML='<div style="font-weight:700;font-size:17px;margin-bottom:10px;color:#22c55e;">App Data Refreshed</div>App data has been refreshed to ensure the latest version and updates are loaded.<br><br>The application will now restart.<div style="margin-top:16px;"><button id="startupMsgOk" style="padding:10px 32px;font-size:15px;font-weight:700;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;">OK</button></div>';
+    msgDiv.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0a;display:flex;justify-content:center;align-items:center;z-index:100000;';
+    msgDiv.innerHTML='<div style="background:rgba(0,0,0,0.92);color:#fff;padding:24px 28px;border-radius:12px;text-align:center;font-size:15px;line-height:1.6;max-width:340px;border:1px solid #333;"><div style="font-weight:700;font-size:17px;margin-bottom:10px;color:#22c55e;">App Data Refreshed</div>App data has been refreshed to ensure the latest version and updates are loaded.<br><br>The application will now restart.<div style="margin-top:16px;"><button id="startupMsgOk" style="padding:10px 32px;font-size:15px;font-weight:700;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;">OK</button></div></div>';
     document.body.appendChild(msgDiv);
     splashEl.style.display='none';
     document.getElementById('startupMsgOk').addEventListener('click',function(){
