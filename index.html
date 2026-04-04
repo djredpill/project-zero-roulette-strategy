@@ -79,12 +79,16 @@ body.theme-dark .ghost {
 body.theme-dark .mode-toggle button {
   border-color:rgba(255,255,255,0.5) !important;
 }
-body.theme-dark .mode-toggle button.active-sim { border-color:#000 !important; }
-body.theme-dark .mode-toggle button.active-live { border-color:#000 !important; }
-body.theme-dark .mode-toggle button.active-table { border-color:#000 !important; }
-/* Dark mode: threshold badges → light blue text */
+body.theme-dark .mode-toggle button.active-sim { border-color:rgba(255,255,255,0.5) !important; }
+body.theme-dark .mode-toggle button.active-live { border-color:rgba(255,255,255,0.5) !important; }
+body.theme-dark .mode-toggle button.active-table { border-color:rgba(255,255,255,0.5) !important; }
+/* Dark mode: threshold badges → amber/brown to match Undo Last Spin & Enter number */
 body.theme-dark .threshold-badge {
-  color:#93c5fd !important; border-color:rgba(255,255,255,0.3) !important;
+  color:#b45309 !important; border-color:rgba(255,255,255,0.3) !important;
+}
+/* Dark mode: white borders on zero bet boxes */
+body.theme-dark .zeroItem {
+  border-color:rgba(255,255,255,0.5) !important;
 }
 /* Colored themes: semi-transparent bg, black borders, text handled in overrides section */
 body.theme-blue input, body.theme-blue select,
@@ -128,6 +132,12 @@ body.theme-dark .modal-box, body.theme-blue .modal-box, body.theme-green .modal-
 body.theme-turquoise .modal-box, body.theme-gold .modal-box, body.theme-pink .modal-box,
 body.theme-grey .modal-box {
   background:#2a2a3e; color:#e0e0e0;
+}
+/* Modal ghost/Cancel buttons → white text & border on dark/colored themes */
+body.theme-dark .modal-box .ghost, body.theme-blue .modal-box .ghost, body.theme-green .modal-box .ghost,
+body.theme-turquoise .modal-box .ghost, body.theme-gold .modal-box .ghost, body.theme-pink .modal-box .ghost,
+body.theme-grey .modal-box .ghost {
+  color:#e0e0e0 !important; border-color:rgba(255,255,255,0.3) !important;
 }
 body.theme-dark .badge, body.theme-blue .badge, body.theme-green .badge,
 body.theme-turquoise .badge, body.theme-gold .badge, body.theme-pink .badge,
@@ -563,11 +573,9 @@ body.theme-pink input, body.theme-pink select,
 body.theme-grey input, body.theme-grey select {
   color:#fff !important;
 }
-/* Leave Casino → black on all colored themes */
-body.theme-blue #leaveCasinoBtn,body.theme-green #leaveCasinoBtn,
-body.theme-turquoise #leaveCasinoBtn,body.theme-gold #leaveCasinoBtn,
-body.theme-pink #leaveCasinoBtn,body.theme-grey #leaveCasinoBtn {
-  color:#111 !important; border-color:#111 !important;
+/* Leave Casino → red text on ALL themes */
+#leaveCasinoBtn {
+  color:#ef4444 !important; border-color:#ef4444 !important;
 }
 /* Auto Sim → black text on all colored themes */
 body.theme-blue #autoSimToggle,body.theme-green #autoSimToggle,
@@ -650,21 +658,9 @@ body.theme-pink label {
   color:#7e22ce !important;
 }
 
-/* Threshold badges per theme */
-/* Blue/Green/Turquoise: brown text (matches Enter number placeholder), black border */
-body.theme-blue .threshold-badge, body.theme-green .threshold-badge, body.theme-turquoise .threshold-badge {
-  border-color:#111 !important; color:#b45309 !important;
-}
-/* Gold: red text, black border */
-body.theme-gold .threshold-badge {
-  border-color:#111 !important; color:#ef4444 !important;
-}
-/* Pink: red text, black border */
-body.theme-pink .threshold-badge {
-  border-color:#111 !important; color:#ef4444 !important;
-}
-/* Grey: brown text (matches Enter number placeholder), black border */
-body.theme-grey .threshold-badge {
+/* Threshold badges per theme — all match Undo Last Spin & Enter number color (#b45309) */
+body.theme-blue .threshold-badge, body.theme-green .threshold-badge, body.theme-turquoise .threshold-badge,
+body.theme-gold .threshold-badge, body.theme-pink .threshold-badge, body.theme-grey .threshold-badge {
   border-color:#111 !important; color:#b45309 !important;
 }
 
@@ -1167,7 +1163,7 @@ body.theme-grey .threshold-badge {
             <button id="manualSideBetBtn" class="ghost" style="border-color:#8b5cf6;color:#8b5cf6;grid-column:span 2;">Place Side Bet</button>
             <button id="rollbackBtn" class="ghost" style="border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
             <button id="editMidSession" class="ghost">Edit Bankroll/Unit</button>
-            <button id="leaveCasinoBtn" class="ghost" style="grid-column:span 2;border-color:#16a34a;color:#16a34a;font-weight:700;">Leave The Casino</button>
+            <button id="leaveCasinoBtn" class="ghost" style="grid-column:span 2;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave The Casino</button>
             <button id="clearSavedState" class="ghost" style="grid-column:span 2;font-size:11px;">Clear Saved App State</button>
           </div>
         </div>
@@ -2033,11 +2029,12 @@ function refresh(){
       el.style.pointerEvents='none';
       el.style.opacity='0.85';
     });
-    // Hide Spins: X/Y and S/Spins in sticky header
+    // Hide set Spins: X/Y in sticky header (but keep S/Spins session counter visible)
     const stickyCounterSpan=$('stickyCounter').parentElement;
     if(stickyCounterSpan)stickyCounterSpan.style.display='none';
+    // Session spin counter stays visible in strategy mode
     const stickySessionSpinsWrap=$('stickySessionSpinsWrap');
-    if(stickySessionSpinsWrap)stickySessionSpinsWrap.style.display='none';
+    if(stickySessionSpinsWrap)stickySessionSpinsWrap.style.display='';
     // Keep sticky zeros visible in strategy mode (read-only)
     document.querySelector('.sticky-zeros').style.display='';
   }else{
