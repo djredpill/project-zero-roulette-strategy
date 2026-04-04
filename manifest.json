@@ -1,0 +1,25 @@
+{
+  "name": "Project Zero Strategy",
+  "short_name": "PZ Strategy",
+  "description": "Roulette zero-bet strategy tracker and session manager",
+  "start_url": "/project-zero-roulette-strategy/index.html",
+  "scope": "/project-zero-roulette-strategy/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
