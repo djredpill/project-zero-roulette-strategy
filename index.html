@@ -1,5 +1,5 @@
 <!--
-  Project Zero Roulette — Revision 14
+  Project Zero Roulette — Revision 16
   Copyright (c) 2026 James Munchman. All rights reserved.
 
   This software and its source code are the proprietary property of
@@ -153,7 +153,7 @@ body{font-family:Inter,system-ui,'Segoe UI',Roboto,Arial,sans-serif;margin:0;pad
 .wrap{max-width:1100px;margin:0 auto;padding:12px 14px;position:relative}
 
 /* ===== HEADER ===== */
-header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+header{margin-bottom:4px}
 .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .card{background:var(--card-bg);padding:10px 12px;border-radius:10px}
 label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
@@ -166,7 +166,7 @@ button.ghost:active{background:rgba(0,0,0,0.05)}
 .big{font-size:18px;font-weight:600}
 
 /* ===== LAYOUT ===== */
-.panel{display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:10px}
+.panel{display:grid;grid-template-columns:1fr 340px;gap:12px;margin-top:6px}
 
 /* ===== ZERO TRIO (horizontal, sticky) ===== */
 .zeros-strip{display:flex;gap:6px;align-items:stretch;margin-bottom:8px;max-width:100%;overflow:hidden}
@@ -257,7 +257,6 @@ body.theme-dark .sticky-sitout .ghost,body.theme-blue .sticky-sitout .ghost,body
 
 @media(max-width:900px){
   .panel{grid-template-columns:1fr}
-  header{flex-direction:column;align-items:stretch}
   .controls{justify-content:center}
   .sticky-header{display:block}
 }
@@ -1141,49 +1140,49 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 
 <header>
   <div>
-    <h1 style="margin:0;font-size:22px;">Project Zero Roulette - Strategy</h1>
+    <h1 style="margin:0;font-size:22px;" id="appTitle">Project Zero Roulette - Strategy</h1>
     <div style="font-size:11px;color:var(--muted);">American table by default. Switch to European to disable 00 and split.</div>
-  </div>
-  <div class="controls">
-    <div class="card" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <div><label>Starting Bankroll</label><input id="startBank" type="number" value="1500" /></div>
-      <div><label>Unit per zero</label><input id="unit" type="number" value="5" /></div>
-      <div>
-        <label>Table Type</label>
-        <select id="tableType">
-          <option value="american">American (0 &amp; 00)</option>
-          <option value="european">European (single 0)</option>
-        </select>
-      </div>
-      <div>
-        <label>Background</label>
-        <select id="bgSelect">
-          <option value="white">White</option>
-          <option value="dark">Dark</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
-          <option value="turquoise">Turquoise</option>
-          <option value="gold">Gold</option>
-          <option value="pink">Pink</option>
-          <option value="grey">Grey</option>
-        </select>
-      </div>
-      <div style="margin-top:8px;">
-        <label>Mode</label>
-        <div class="mode-toggle" id="modeToggle">
-          <button id="modeSimBtn" class="active-sim">SIM</button>
-          <button id="modeLiveBtn">LIVE</button>
-          <button id="modeTableBtn">TABLE</button>
-        </div>
-      </div>
-      <button id="startSession" style="margin-top:14px;">Start Session</button>
-    </div>
   </div>
 </header>
 
 <div class="panel">
   <!-- ===== LEFT COLUMN ===== -->
   <div class="left">
+    <div class="controls">
+      <div class="card" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div><label>Starting Bankroll</label><input id="startBank" type="number" value="1500" /></div>
+        <div><label>Unit per zero</label><input id="unit" type="number" value="5" style="width:60px" /></div>
+        <div>
+          <label>Table Type</label>
+          <select id="tableType">
+            <option value="american">American (0 &amp; 00)</option>
+            <option value="european">European (single 0)</option>
+          </select>
+        </div>
+        <div>
+          <label>Background</label>
+          <select id="bgSelect">
+            <option value="white">White</option>
+            <option value="dark">Dark</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="turquoise">Turquoise</option>
+            <option value="gold">Gold</option>
+            <option value="pink">Pink</option>
+            <option value="grey">Grey</option>
+          </select>
+        </div>
+        <div>
+          <label>Mode</label>
+          <div class="mode-toggle" id="modeToggle">
+            <button id="modeSimBtn" class="active-sim">SIM</button>
+            <button id="modeLiveBtn">LIVE</button>
+            <button id="modeTableBtn">TABLE</button>
+          </div>
+        </div>
+        <button id="startSession">Start Session</button>
+      </div>
+    </div>
     <div class="card">
       <div id="strategyPromptBar"></div>
       <label><strong>Spin Input</strong></label>
@@ -1335,7 +1334,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 </div>
 
 <div style="text-align:right;font-size:10px;color:var(--muted);padding:16px;">
-  Project Zero Roulette — Strategy — Revision 15 — client only
+  Project Zero Roulette — Strategy — Revision 16 — client only
 </div>
 </div>
 
@@ -3019,7 +3018,9 @@ function selectStrategy(strategy){
   $('main-app-content').style.visibility='visible';
   
   if(strategy==='original'){
-    // Legacy mode: show original alerts, hide strategy alerts, hide all strategy UI
+    // Legacy mode: update title, show original alerts, hide strategy alerts, hide all strategy UI
+    if($('appTitle')) $('appTitle').textContent='Project Zero Roulette - Legacy';
+    document.title='Project Zero Roulette - Legacy';
     $('originalAlerts').style.display='block';
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
@@ -3037,7 +3038,9 @@ function selectStrategy(strategy){
       el.style.opacity='';
     });
   }else{
-    // Strategy mode: hide original alerts, show strategy alerts
+    // Strategy mode: restore title, hide original alerts, show strategy alerts
+    if($('appTitle')) $('appTitle').textContent='Project Zero Roulette - Strategy';
+    document.title='Project Zero Roulette - Strategy';
     $('originalAlerts').style.display='none';
     $('strategyAlerts').style.display='block';
     $('strategyPromptBar').style.display='block';
