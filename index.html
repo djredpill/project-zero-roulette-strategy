@@ -1,5 +1,5 @@
 <!--
-  Project Zero Roulette — Revision 11
+  Project Zero Roulette — Revision 13
   Copyright (c) 2026 James Munchman. All rights reserved.
 
   This software and its source code are the proprietary property of
@@ -722,6 +722,14 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 .pocketed-section .pocketed-label { color:var(--muted); }
 .pocketed-section .pocketed-value { font-weight:700; }
 
+/* ===== CHANGE MODE BUTTON ===== */
+#changeModeBtn { transition:all .15s; }
+#changeModeBtn:hover { background:#f59e0b; color:#fff; }
+@keyframes changeModeFlash { 0%,100%{opacity:1;border-color:#f59e0b} 50%{opacity:0.5;border-color:#d97706} }
+.change-mode-flashing { animation:changeModeFlash 1.5s ease-in-out infinite; }
+#changeModeModal .strategy-switch-section.flashing .strategy-switch-btn { animation:strategyFlash 1.5s ease-in-out infinite; }
+#changeModeModal .strategy-switch-section.no-flash .strategy-switch-btn { animation:none; opacity:1; }
+
 /* ===== MODE SELECTION SCREEN (after splash) ===== */
 #mode-select-overlay {
   position:fixed; inset:0; background:#0a0a0a;
@@ -847,6 +855,24 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
     <div class="modal-actions">
       <button id="winCashOutBtn" style="background:#16a34a;">Cash Out & Restart</button>
       <button id="winKeepGoingBtn" class="ghost">Keep Going</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHANGE MODE POPUP ===== -->
+<div id="changeModeModal" class="modal-overlay">
+  <div class="modal-box" style="border-top:4px solid #f59e0b;max-width:480px;">
+    <h3 style="color:#b45309;text-align:center;">Change Mode</h3>
+    <p style="font-size:13px;text-align:center;color:var(--muted);margin-bottom:12px;">Select a strategy or switch to Legacy Mode</p>
+    <div class="strategy-switch-grid" id="changeModeGrid">
+      <button class="strategy-switch-btn ssb-green" id="sswSteadyEddie" onclick="handleStrategySwitch('steadyeddie')">Steady Eddie</button>
+      <button class="strategy-switch-btn ssb-yellow" id="sswDelayedSurge" onclick="handleStrategySwitch('delayedsurge')">Delayed Surge</button>
+      <button class="strategy-switch-btn ssb-orange" id="sswSlowGrind" onclick="handleStrategySwitch('slowgrind')">Slow Grind</button>
+      <button class="strategy-switch-btn ssb-red" id="sswStreakReset" onclick="handleStrategySwitch('streakreset')">Streak Reset</button>
+      <button class="strategy-switch-btn ssb-blue" id="sswLegacy" onclick="handleStrategySwitch('original')" style="grid-column:span 2;">Switch to Legacy Mode</button>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button class="ghost" onclick="$('changeModeModal').style.display='none'" style="width:100%;">Cancel</button>
     </div>
   </div>
 </div>
@@ -1115,7 +1141,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 
 <header>
   <div>
-    <h1 style="margin:0;font-size:22px;">Project Zero Roulette</h1>
+    <h1 style="margin:0;font-size:22px;">Project Zero Roulette - Strategy</h1>
     <div style="font-size:11px;color:var(--muted);">American table by default. Switch to European to disable 00 and split.</div>
   </div>
   <div class="controls">
@@ -1152,9 +1178,6 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
       </div>
       <button id="startSession" style="margin-top:14px;">Start Session</button>
     </div>
-    <div class="card" style="text-align:right;">
-    <div class="big" id="currentBalance">$1,000</div>      <div style="font-size:11px;color:var(--muted);">Session Balance</div>
-    </div>
   </div>
 </header>
 
@@ -1162,57 +1185,25 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
   <!-- ===== LEFT COLUMN ===== -->
   <div class="left">
     <div class="card">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-        <div style="flex:1;min-width:200px;">
-          <div id="strategyPromptBar"></div>
-          <label><strong>Spin Input</strong></label>
-          <div class="row">
-            <input id="spinInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter number" style="flex:1" readonly />
-            <button id="placeSpin">Place Spin</button>
-            <button id="randomSpin" class="ghost">Random</button>
-          </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Use the number pad below or type a value. Valid: 0, 00, 1-36.</div>
-          <div class="auto-sim-bar" id="autoSimBar">
-            <button id="autoSimToggle" class="ghost" style="border-color:#3b82f6;color:#3b82f6;">Auto Sim</button>
-            <select id="autoSimSpeed">
-              <option value="2000">Slow (~2s)</option>
-              <option value="1000" selected>Medium (~1s)</option>
-              <option value="300">Fast (~0.3s)</option>
-            </select>
-          </div>
-          <div class="numpad" id="numpad"></div>
-          <label style="margin-top:8px;"><strong>Last 36 Numbers</strong></label>
-          <div class="lastnums" id="numHistory" style="position:sticky;top:90px;z-index:98;background:var(--bg);padding:4px 0;"></div>
-        </div>
-        <div style="min-width:180px;">
-          <label><strong>Session Controls</strong></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-            <button id="resetSession" class="ghost">Reset Session</button>
-            <button id="exportCsv" class="ghost">Export CSV</button>
-            <button id="resetHist" class="ghost">Reset Historical P/L</button>
-            <button id="sitOutToggle" class="ghost" style="border-color:red;color:red;">Sit Out Spins</button>
-            <button id="manualSideBetBtn" class="ghost" style="border-color:#8b5cf6;color:#8b5cf6;grid-column:span 2;">Place Side Bet</button>
-            <button id="rollbackBtn" class="ghost" style="border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
-            <button id="editMidSession" class="ghost">Edit Bankroll/Unit</button>
-            <button id="leaveCasinoBtn" class="ghost" style="grid-column:span 2;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave The Casino</button>
-            <button id="clearSavedState" class="ghost" style="grid-column:span 2;font-size:11px;">Clear Saved App State</button>
-          </div>
-          <div class="strategy-switch-section" id="strategySwitchSection">
-            <div class="strategy-switch-note">Tap any strategy below for details &mdash; including your current active strategy</div>
-            <div class="strategy-switch-grid">
-              <button class="strategy-switch-btn ssb-green" id="sswSteadyEddie" onclick="handleStrategySwitch('steadyeddie')">Steady Eddie</button>
-              <button class="strategy-switch-btn ssb-yellow" id="sswDelayedSurge" onclick="handleStrategySwitch('delayedsurge')">Delayed Surge</button>
-              <button class="strategy-switch-btn ssb-orange" id="sswSlowGrind" onclick="handleStrategySwitch('slowgrind')">Slow Grind</button>
-              <button class="strategy-switch-btn ssb-red" id="sswStreakReset" onclick="handleStrategySwitch('streakreset')">Streak Reset</button>
-              <button class="strategy-switch-btn ssb-blue" id="sswLegacy" onclick="handleStrategySwitch('original')" style="grid-column:span 2;">Switch to Legacy Mode</button>
-            </div>
-          </div>
-        </div>
+      <div id="strategyPromptBar"></div>
+      <label><strong>Spin Input</strong></label>
+      <div class="row">
+        <input id="spinInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter number" style="flex:1" readonly />
+        <button id="placeSpin">Place Spin</button>
+        <button id="randomSpin" class="ghost">Random</button>
       </div>
-
-      <div class="active-stake-bar" id="activeStakeBar">
-        <strong>Active Stake:</strong> <span id="activeStakeText"></span>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">Use the number pad below or type a value. Valid: 0, 00, 1-36.</div>
+      <div class="auto-sim-bar" id="autoSimBar">
+        <button id="autoSimToggle" class="ghost" style="border-color:#3b82f6;color:#3b82f6;">Auto Sim</button>
+        <select id="autoSimSpeed">
+          <option value="2000">Slow (~2s)</option>
+          <option value="1000" selected>Medium (~1s)</option>
+          <option value="300">Fast (~0.3s)</option>
+        </select>
       </div>
+      <div class="numpad" id="numpad"></div>
+      <label style="margin-top:8px;"><strong>Last 36 Numbers</strong></label>
+      <div class="lastnums" id="numHistory" style="position:sticky;top:90px;z-index:98;background:var(--bg);padding:4px 0;"></div>
 
       <div id="sitOutBadge">
         SITTING OUT: <span id="sitOutCount">0</span> SPINS
@@ -1254,9 +1245,14 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
   <aside>
     <div class="card">
       <label><strong>Session Summary</strong></label>
+      <div style="margin-bottom:8px;"><div style="font-size:12px;">Session Balance</div><div class="big" id="currentBalance">$1,000</div></div>
       <div style="margin-bottom:8px;"><div style="font-size:12px;">Starting Bankroll</div><div class="big" id="sumStart">$1,500</div></div>
       <div style="margin-bottom:8px;"><div style="font-size:12px;">Session P/L</div><div class="big" id="sumSession">$0</div></div>
       <div style="margin-bottom:8px;"><div style="font-size:12px;">Historical P/L</div><div class="big" id="sumHist">$0</div></div>
+
+      <div class="active-stake-bar" id="activeStakeBar" style="margin-top:8px;">
+        <strong>Active Stake:</strong> <span id="activeStakeText"></span>
+      </div>
 
       <!-- Legacy Mode Alerts (shown in legacy mode) -->
       <div id="originalAlerts">
@@ -1317,12 +1313,31 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
           <div class="pocketed-row"><span class="pocketed-label">Sessions Played</span><span class="pocketed-value" id="sessionsPlayed">0</span></div>
         </div>
       </div>
+
+      <!-- Session Controls (moved to sidebar) -->
+      <label style="margin-top:16px;"><strong>Session Controls</strong></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+        <button id="resetSession" class="ghost">Reset Session</button>
+        <button id="exportCsv" class="ghost">Export CSV</button>
+        <button id="resetHist" class="ghost">Reset Historical P/L</button>
+        <button id="sitOutToggle" class="ghost" style="border-color:red;color:red;">Sit Out Spins</button>
+        <button id="manualSideBetBtn" class="ghost" style="border-color:#8b5cf6;color:#8b5cf6;grid-column:span 2;">Place Side Bet</button>
+        <button id="rollbackBtn" class="ghost" style="border-color:#f59e0b;color:#b45309;">Undo Last Spin</button>
+        <button id="editMidSession" class="ghost">Edit Bankroll/Unit</button>
+        <button id="leaveCasinoBtn" class="ghost" style="grid-column:span 2;border-color:#ef4444;color:#ef4444;font-weight:700;">Leave The Casino</button>
+        <button id="clearSavedState" class="ghost" style="grid-column:span 2;font-size:11px;border:2px solid #000;">Clear Saved App State</button>
+      </div>
+
+      <!-- Change Mode Button -->
+      <div id="changeModeSection" style="margin-top:12px;">
+        <button id="changeModeBtn" class="ghost" style="width:100%;padding:14px;font-size:15px;font-weight:700;border:3px solid #f59e0b;color:#b45309;border-radius:10px;cursor:pointer;">Change Mode</button>
+      </div>
     </div>
   </aside>
 </div>
 
 <div style="text-align:right;font-size:10px;color:var(--muted);padding:16px;">
-  Project Zero Roulette — Revision 12 — client only
+  Project Zero Roulette — Strategy — Revision 13 — client only
 </div>
 </div>
 
@@ -1741,8 +1756,6 @@ function getNumProps(n){
 }
 function runPatternCheck(){
   if(state.last36.length<6)return;
-  // Confirmed: Side bets limited to first 20 spins only
-  if(state.totalSpins>20)return;
   const recent=state.last36.slice(0,6).map(n=>getNumProps(n));
   const checks=[{name:'Color',key:'color'},{name:'Parity',key:'parity'},{name:'Dozen',key:'dozen'},{name:'Column',key:'col'}];
   const alerts=[];
@@ -2576,9 +2589,13 @@ $('startSession').onclick=()=>{
   }else{
     doResetSession(true);
   }
-  // Stop flashing once session starts
-  const ssSection=$('strategySwitchSection');
-  if(ssSection){ssSection.classList.remove('flashing');ssSection.classList.add('no-flash');}
+  // Stop flashing once session starts (in the Change Mode modal)
+  const cmGrid=$('changeModeGrid');
+  if(cmGrid && cmGrid.parentElement){
+    cmGrid.classList.remove('flashing');
+    cmGrid.parentElement.classList.remove('flashing');
+    cmGrid.parentElement.classList.add('no-flash');
+  }
 };
 
 $('placeSpin').onclick=()=>{if($('spinInput').value!==''){handleSpin($('spinInput').value);$('spinInput').value='';}};
@@ -2702,7 +2719,7 @@ $('spinCountRight').onchange=()=>{state.spinCounterMax=Math.max(1,parseInt($('sp
 $('nSpins').onchange=()=>{state.spinCounterMax=Math.max(1,parseInt($('nSpins').value)||12);$('spinCountRight').value=state.spinCounterMax;refresh();};
 $('resetCountBtn').onclick=()=>{state.spinCounter=0;refresh();};
 
-$('btnKeepZeros').onclick=()=>{
+function _doKeepZeros(){
   const amt=parseFloat($('sideBetAmount').value)||0;
   if(!state.pendingType){dismissModal('patternDialog');return;}
   state.activeSides.push({type:state.pendingType,value:state.pendingValue,amt:amt,remove:false});
@@ -2710,8 +2727,8 @@ $('btnKeepZeros').onclick=()=>{
   dismissModal('patternDialog');
   showNextPendingAlert();
   refresh();
-};
-$('btnRemoveZeros').onclick=()=>{
+}
+function _doRemoveZeros(){
   const amt=parseFloat($('sideBetAmount').value)||0;
   if(!state.pendingType){dismissModal('patternDialog');return;}
   state.activeSides.push({type:state.pendingType,value:state.pendingValue,amt:amt,remove:true});
@@ -2719,7 +2736,26 @@ $('btnRemoveZeros').onclick=()=>{
   dismissModal('patternDialog');
   showNextPendingAlert();
   refresh();
-};
+}
+function _strategySideBetWarning(callback){
+  if(state.strategyMode && state.strategyMode!=='original'){
+    dismissModal('patternDialog');
+    appConfirm('Warning: Side Bets Break Strategy Protection','Placing a side bet will disable your current strategy\'s built-in protection and bet structure. You will be switched to Legacy Mode.\n\nAre you sure you want to continue?').then(function(ok){
+      if(ok){
+        appConfirm('Final Confirmation','This action cannot be undone for this session. You will be permanently switched to Legacy Mode and your strategy protections will no longer apply.\n\nProceed with side bet?').then(function(ok2){
+          if(ok2){
+            handleStrategySwitch('original');
+            setTimeout(function(){ callback(); }, 300);
+          }
+        });
+      }
+    });
+  }else{
+    callback();
+  }
+}
+$('btnKeepZeros').onclick=()=>{ _strategySideBetWarning(_doKeepZeros); };
+$('btnRemoveZeros').onclick=()=>{ _strategySideBetWarning(_doRemoveZeros); };
 $('btnIgnore').onclick=()=>{
   state.pendingType=null;state.pendingValue=null;
   dismissModal('patternDialog');
@@ -2841,17 +2877,18 @@ function msbUpdateOutcome(){
 }
 
 $('manualSideBetBtn').onclick=function(){
-  // In strategy mode (not legacy), show warning flow
+  // In strategy mode (not legacy), show double confirmation warning
   if(state.strategyMode && state.strategyMode!=='original'){
-    appConfirm('Side Bets Disabled in Strategy Mode','Placing side bets will override your current strategy\'s bet structure and may significantly impact your expected outcomes.\n\nDo you want to continue anyway?').then(function(ok){
+    appConfirm('Warning: Side Bets Break Strategy Protection','Placing a side bet will disable your current strategy\'s built-in protection and bet structure. You will be switched to Legacy Mode.\n\nAre you sure you want to continue?').then(function(ok){
       if(ok){
-        // Second confirmation with 3 options — use correct element IDs
-        $('gmTitle').textContent='Are you sure?';
-        $('gmMessage').innerHTML='Your session will no longer follow the active strategy. Results may differ significantly from projected win rates.';
-        $('genericModal').querySelector('.modal-actions').innerHTML='<button onclick="dismissModal(\'genericModal\');openManualSideBet();" style="background:#8b5cf6;color:#fff;padding:10px 14px;border-radius:8px;font-weight:700;border:none;cursor:pointer;">Place Side Bet</button>'+
-          '<button onclick="dismissModal(\'genericModal\');handleStrategySwitch(\'original\');" style="background:#3b82f6;color:#fff;padding:10px 14px;border-radius:8px;font-weight:700;border:none;cursor:pointer;">Switch to Legacy</button>'+
-          '<button class="ghost" onclick="dismissModal(\'genericModal\');" style="padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer;">Go Back</button>';
-        queueModal('genericModal');
+        // Second confirmation
+        appConfirm('Final Confirmation','This action cannot be undone for this session. You will be permanently switched to Legacy Mode and your strategy protections will no longer apply.\n\nProceed with side bet?').then(function(ok2){
+          if(ok2){
+            // Switch to Legacy mode first, then open side bet
+            handleStrategySwitch('original');
+            setTimeout(function(){ openManualSideBet(); }, 300);
+          }
+        });
       }
     });
   }else{
@@ -2988,9 +3025,9 @@ function selectStrategy(strategy){
     $('originalAlerts').style.display='block';
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
-    // Hide strategy switch buttons for clean legacy look
-    var ssSection=$('strategySwitchSection');
-    if(ssSection) ssSection.style.display='none';
+    // Hide Change Mode button for clean legacy look
+    var changeModeSection=$('changeModeSection');
+    if(changeModeSection) changeModeSection.style.display='none';
     // Show legacy settings
     $('editMidSession').style.display='';
     $('uniformBetBar').classList.remove('strategy-hidden');
@@ -3329,6 +3366,7 @@ function handleStrategySpin(val){
   }
   
   state.activeSides=[];state.pendingType=null;state.pendingValue=null;state.pendingAlerts=[];
+  runPatternCheck();
   refresh();
   updateStrategyPrompt();
 }
@@ -3435,12 +3473,7 @@ const STRATEGY_DESCRIPTIONS={
 };
 
 function updateStrategySwitchButtons(){
-  // Add flashing class if session hasn't started yet
-  const ssSection=$('strategySwitchSection');
-  if(ssSection && !state.sessionStarted){
-    ssSection.classList.add('flashing');
-    ssSection.classList.remove('no-flash');
-  }
+  // Update buttons inside the Change Mode modal
   const sm=state.strategyMode;
   ['steadyeddie','delayedsurge','slowgrind','streakreset','original'].forEach(function(key){
     const btnId=key==='steadyeddie'?'sswSteadyEddie':key==='delayedsurge'?'sswDelayedSurge':key==='slowgrind'?'sswSlowGrind':key==='streakreset'?'sswStreakReset':'sswLegacy';
@@ -3455,7 +3488,37 @@ function updateStrategySwitchButtons(){
       }
     }
   });
+  // Update Change Mode button text based on current mode
+  var changeModeBtn=$('changeModeBtn');
+  if(changeModeBtn){
+    if(sm==='original'){
+      changeModeBtn.textContent='Change Mode (Legacy)';
+    }else{
+      var name=STRATEGY_DESCRIPTIONS[sm]?STRATEGY_DESCRIPTIONS[sm].name:sm;
+      changeModeBtn.textContent='Change Mode ('+name+')';
+    }
+  }
+  // Hide Change Mode section in Legacy mode (user selected Legacy from initial overlay)
+  var changeModeSection=$('changeModeSection');
+  if(changeModeSection){
+    // Only show if we're in strategy app (always show - user can switch back)
+    changeModeSection.style.display='';
+  }
 }
+
+// Change Mode button opens the modal with flashing buttons
+$('changeModeBtn').addEventListener('click',function(){
+  updateStrategySwitchButtons();
+  var modal=$('changeModeModal');
+  // Add flashing animation to the modal grid
+  var grid=$('changeModeGrid');
+  if(grid){
+    grid.classList.add('flashing');
+    // Use the strategy-switch-section flashing class on the parent
+    grid.parentElement.classList.add('strategy-switch-section','flashing');
+  }
+  modal.style.display='flex';
+});
 
 function handleStrategySwitch(targetStrategy){
   const info=STRATEGY_DESCRIPTIONS[targetStrategy];
@@ -3505,6 +3568,10 @@ function executeStrategySwitch(targetStrategy){
   state.spinCounter=0;
   state.sitOut=0;
   
+  // Close the Change Mode modal if open
+  var changeModeModal=$('changeModeModal');
+  if(changeModeModal) changeModeModal.style.display='none';
+
   if(targetStrategy==='original'){
     // Switch to legacy mode — hide all strategy-specific UI
     state.unit=5;
@@ -3513,9 +3580,6 @@ function executeStrategySwitch(targetStrategy){
     $('strategyAlerts').style.display='none';
     $('strategyPromptBar').style.display='none';
     $('editMidSession').style.display='';
-    // Hide strategy switch buttons and strategy-specific elements
-    var ssSection=$('strategySwitchSection');
-    if(ssSection) ssSection.style.display='none';
   }else{
     // Switch to a strategy mode
     state.unit=STRATEGY_BASE_BET;
