@@ -1,5 +1,5 @@
 <!--
-  Project Zero Roulette — Revision 16
+  Project Zero Roulette — Revision 17
   Copyright (c) 2026 James Munchman. All rights reserved.
 
   This software and its source code are the proprietary property of
@@ -221,6 +221,20 @@ body.flash-lose-urgent{animation:flashRedUrgent .3s linear}
 
 /* ===== ACTIVE STAKE DISPLAY ===== */
 .active-stake-bar{display:none;background:#eff6ff;border:1px solid #3b82f6;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:13px;color:#1e40af}
+
+/* ===== QUICK BET KEYPAD ===== */
+#quickBetModal .modal-box{border-top:4px solid #0891b2;max-width:320px}
+.quick-display{font-size:32px;font-weight:700;text-align:center;padding:12px;background:#f1f5f9;border-radius:8px;margin:12px 0;min-height:48px;letter-spacing:2px}
+.quick-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.quick-keypad button{padding:14px;font-size:20px;font-weight:700;border-radius:8px;background:#e2e8f0;color:#1e293b;border:none;min-height:50px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.quick-keypad button:active{background:#cbd5e1}
+.quick-keypad .qk-zero{grid-column:2}
+.quick-keypad .qk-clear{background:#ef4444;color:#fff}
+.quick-keypad .qk-clear:active{background:#dc2626}
+/* ===== CUSTOM RAISE MODAL ===== */
+#customRaiseModal .modal-box{border-top:4px solid #f59e0b;max-width:400px}
+#customRaiseModal .zeros-strip{display:flex;gap:8px;margin:12px 0}
+#customRaiseModal .zeroItem{flex:1;text-align:center;border:2px solid #000;border-radius:8px;padding:10px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 
 /* ===== RAISE/HOLD MODAL ===== */
 #raiseHoldModal .modal-box{border-top:4px solid #f59e0b}
@@ -948,6 +962,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
     <div id="raiseHoldInfo" style="font-size:13px;color:var(--muted);margin-bottom:12px;"></div>
     <div class="modal-actions">
       <button id="btnRaise" style="background:#16a34a;">Raise (+<span id="raiseAmt"></span>)</button>
+      <button id="btnCustom" style="background:#0891b2;">Custom</button>
       <button id="btnHold" class="ghost">Hold</button>
     </div>
   </div>
@@ -983,6 +998,58 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
     <div class="modal-actions">
       <button id="zeSave" style="background:#16a34a;">Save</button>
       <button id="zeCancel" class="ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUICK BET KEYPAD MODAL ===== -->
+<div id="quickBetModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 id="quickBetTitle">Quick Edit: Bet on 0</h3>
+    <div class="quick-display" id="quickBetDisplay">0</div>
+    <div class="quick-keypad">
+      <button onclick="qkDigit('1')">1</button>
+      <button onclick="qkDigit('2')">2</button>
+      <button onclick="qkDigit('3')">3</button>
+      <button onclick="qkDigit('4')">4</button>
+      <button onclick="qkDigit('5')">5</button>
+      <button onclick="qkDigit('6')">6</button>
+      <button onclick="qkDigit('7')">7</button>
+      <button onclick="qkDigit('8')">8</button>
+      <button onclick="qkDigit('9')">9</button>
+      <button class="qk-clear" onclick="qkClear()">C</button>
+      <button class="qk-zero" onclick="qkDigit('0')">0</button>
+      <button style="background:#f59e0b;color:#000;" onclick="qkBackspace()">&larr;</button>
+    </div>
+    <div class="modal-actions">
+      <button id="qkSave" style="background:#16a34a;">Save</button>
+      <button id="qkCancel" class="ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CUSTOM RAISE MODAL ===== -->
+<div id="customRaiseModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3>Custom Bet Edit</h3>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 8px;">Tap any box to quickly set its value.</p>
+    <div class="zeros-strip">
+      <div class="zeroItem" id="crBet0Card">
+        <div style="font-size:11px;color:var(--muted);">Bet on 0</div>
+        <div class="big" id="crBet0Display">$5</div>
+      </div>
+      <div class="zeroItem" id="crBetSplitCard">
+        <div style="font-size:11px;color:var(--muted);">0/00 split</div>
+        <div class="big" id="crBetSplitDisplay">$5</div>
+      </div>
+      <div class="zeroItem" id="crBet00Card">
+        <div style="font-size:11px;color:var(--muted);">Bet on 00</div>
+        <div class="big" id="crBet00Display">$5</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button id="crDone" style="background:#16a34a;">Done</button>
+      <button id="crCancel" class="ghost">Cancel</button>
     </div>
   </div>
 </div>
@@ -1122,9 +1189,9 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
     <span>Spins: <strong id="stickyCounter">0/12</strong></span>
   </div>
   <div class="sticky-zeros">
-    <div class="sz" id="sz0" onclick="openZeroEdit()">0: $5</div>
-    <div class="sz" id="szSplit" onclick="openZeroEdit()">Spl: $5</div>
-    <div class="sz" id="sz00" onclick="openZeroEdit()">00: $5</div>
+    <div class="sz" id="sz0" data-bet="bet0">0: $5</div>
+    <div class="sz" id="szSplit" data-bet="betSplit">Spl: $5</div>
+    <div class="sz" id="sz00" data-bet="bet00">00: $5</div>
   </div>
   <div class="sticky-last36" id="stickyLast36"></div>
   <div class="sticky-sitout" id="stickySitOut">
@@ -1211,19 +1278,19 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
         <button class="ghost" onclick="cancelSitOut()" style="background:#fff;border-color:red;color:red;">Cancel</button>
       </div>
 
-      <div class="uniform-bet-bar" id="uniformBetBar">Click any Zero box to change individual bets</div>
+      <div class="uniform-bet-bar" id="uniformBetBar">Tap to quick-edit • Double-tap for full editor</div>
       <div class="zeros-strip" id="zerosStrip">
-        <div class="zeroItem" id="bet0Card" onclick="openZeroEdit()">
+        <div class="zeroItem" id="bet0Card" data-bet="bet0">
           <div style="font-size:11px;color:var(--muted);">Bet on 0</div>
           <div class="big" id="bet0Display">$5.00</div>
           <div style="font-size:10px;color:var(--muted);" id="pay0"></div>
         </div>
-        <div class="zeroItem" id="betSplitCard" onclick="openZeroEdit()">
+        <div class="zeroItem" id="betSplitCard" data-bet="betSplit">
           <div style="font-size:11px;color:var(--muted);">Bet on 0/00 split</div>
           <div class="big" id="betSplitDisplay">$5.00</div>
           <div style="font-size:10px;color:var(--muted);" id="paySplit"></div>
         </div>
-        <div class="zeroItem" id="bet00Card" onclick="openZeroEdit()">
+        <div class="zeroItem" id="bet00Card" data-bet="bet00">
           <div style="font-size:11px;color:var(--muted);">Bet on 00</div>
           <div class="big" id="bet00Display">$5.00</div>
           <div style="font-size:10px;color:var(--muted);" id="pay00"></div>
@@ -1334,7 +1401,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
 </div>
 
 <div style="text-align:right;font-size:10px;color:var(--muted);padding:16px;">
-  Project Zero Roulette — Strategy — Revision 16 — client only
+  Project Zero Roulette — Strategy — Revision 17 — client only
 </div>
 </div>
 
@@ -1535,7 +1602,7 @@ function buildNumpad(){
 /* ===== MODAL QUEUE SYSTEM ===== */
 const modalQueue=[];
 let activeModal=null;
-const MODAL_PRIORITY={crisisModal:1,raiseHoldModal:2,genericModal:3,manualSideBetModal:4,patternDialog:5};
+const MODAL_PRIORITY={crisisModal:1,raiseHoldModal:2,genericModal:3,manualSideBetModal:4,patternDialog:5,quickBetModal:6,customRaiseModal:7};
 
 function queueModal(id){
   if(modalQueue.some(m=>m.id===id))return;
@@ -1997,6 +2064,129 @@ $('zeSave').onclick=()=>{
   $('zeroEditModal').style.display='none';refresh();
 };
 $('zeCancel').onclick=()=>{$('zeroEditModal').style.display='none';};
+
+/* ===== QUICK BET KEYPAD ===== */
+let quickBetTarget=null;
+let quickBetValue='';
+let quickBetReturnTo=null;
+
+const BET_LABELS={bet0:'Bet on 0',betSplit:'0/00 Split',bet00:'Bet on 00'};
+
+var qkFirstPress=true;
+function openQuickBet(target){
+  quickBetTarget=target;
+  quickBetValue=String(state[target]||0);
+  qkFirstPress=true;
+  $('quickBetTitle').textContent='Quick Edit: '+BET_LABELS[target];
+  $('quickBetDisplay').textContent=quickBetValue||'0';
+  if(typeof autoSimRunning!=='undefined'&&autoSimRunning&&autoSimInterval){clearInterval(autoSimInterval);autoSimInterval=null;autoSimPausedByModal=true;}
+  $('quickBetModal').style.display='flex';
+}
+function qkDigit(d){
+  if(qkFirstPress){quickBetValue='';qkFirstPress=false;}
+  if(quickBetValue==='0')quickBetValue='';
+  if(quickBetValue.length>=5)return;
+  quickBetValue+=d;
+  $('quickBetDisplay').textContent=quickBetValue;
+}
+function qkClear(){
+  quickBetValue='';
+  $('quickBetDisplay').textContent='0';
+}
+function qkBackspace(){
+  quickBetValue=quickBetValue.slice(0,-1);
+  $('quickBetDisplay').textContent=quickBetValue||'0';
+}
+$('qkSave').onclick=()=>{
+  const val=parseInt(quickBetValue)||0;
+  state[quickBetTarget]=val;
+  $('quickBetModal').style.display='none';
+  if(quickBetReturnTo){
+    updateCustomRaiseDisplay();
+    $(quickBetReturnTo).style.display='flex';
+  } else {
+    if(typeof autoSimPausedByModal!=='undefined'&&autoSimPausedByModal&&autoSimRunning){autoSimPausedByModal=false;const speed=parseInt($('autoSimSpeed').value)||1000;autoSimInterval=setInterval(()=>{$('randomSpin').click();},speed);}
+  }
+  quickBetReturnTo=null;
+  refresh();
+};
+$('qkCancel').onclick=()=>{
+  $('quickBetModal').style.display='none';
+  if(quickBetReturnTo){
+    $(quickBetReturnTo).style.display='flex';
+  } else {
+    if(typeof autoSimPausedByModal!=='undefined'&&autoSimPausedByModal&&autoSimRunning){autoSimPausedByModal=false;const speed=parseInt($('autoSimSpeed').value)||1000;autoSimInterval=setInterval(()=>{$('randomSpin').click();},speed);}
+  }
+  quickBetReturnTo=null;
+};
+
+/* ===== TAP DETECTION FOR ZERO BET BOXES ===== */
+let tapTimer=null;
+let tapCount=0;
+let tapTarget=null;
+
+function handleZeroTap(betKey){
+  tapCount++;
+  if(tapCount===1){
+    tapTarget=betKey;
+    tapTimer=setTimeout(()=>{
+      quickBetReturnTo=null;
+      openQuickBet(tapTarget);
+      tapCount=0;tapTarget=null;
+    },300);
+  } else if(tapCount===2){
+    clearTimeout(tapTimer);
+    tapCount=0;tapTarget=null;
+    openZeroEdit();
+  }
+}
+
+document.querySelectorAll('[data-bet]').forEach(el=>{
+  el.style.cursor='pointer';
+  el.style.webkitTapHighlightColor='transparent';
+  el.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    handleZeroTap(el.getAttribute('data-bet'));
+  });
+});
+
+/* ===== CUSTOM RAISE MODAL ===== */
+function updateCustomRaiseDisplay(){
+  $('crBet0Display').textContent=fmt(state.bet0);
+  $('crBetSplitDisplay').textContent=fmt(state.betSplit);
+  $('crBet00Display').textContent=fmt(state.bet00);
+}
+function openCustomRaise(){
+  dismissModal('raiseHoldModal');
+  updateCustomRaiseDisplay();
+  $('customRaiseModal').style.display='flex';
+}
+$('btnCustom').onclick=()=>{
+  openCustomRaise();
+};
+
+['crBet0Card','crBetSplitCard','crBet00Card'].forEach(id=>{
+  const betMap={crBet0Card:'bet0',crBetSplitCard:'betSplit',crBet00Card:'bet00'};
+  $(id).style.cursor='pointer';
+  $(id).addEventListener('click',()=>{
+    $('customRaiseModal').style.display='none';
+    quickBetReturnTo='customRaiseModal';
+    openQuickBet(betMap[id]);
+  });
+});
+$('crDone').onclick=()=>{
+  $('customRaiseModal').style.display='none';
+  state.spinCounter=0;
+  if(typeof autoSimPausedByModal!=='undefined'&&autoSimPausedByModal&&autoSimRunning){autoSimPausedByModal=false;const speed=parseInt($('autoSimSpeed').value)||1000;autoSimInterval=setInterval(()=>{$('randomSpin').click();},speed);}
+  refresh();
+};
+$('crCancel').onclick=()=>{
+  $('customRaiseModal').style.display='none';
+  state.spinCounter=0;
+  if(typeof autoSimPausedByModal!=='undefined'&&autoSimPausedByModal&&autoSimRunning){autoSimPausedByModal=false;const speed=parseInt($('autoSimSpeed').value)||1000;autoSimInterval=setInterval(()=>{$('randomSpin').click();},speed);}
+  refresh();
+};
 
 /* ===== UI REFRESH ===== */
 function refresh(){
