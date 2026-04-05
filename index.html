@@ -309,9 +309,7 @@ body.theme-dark .sticky-sitout .ghost,body.theme-blue .sticky-sitout .ghost,body
   .msb-value-grid{gap:3px;margin:4px 0}
   .msb-value-btn{padding:5px 8px;font-size:11px}
   #manualSideBetModal .modal-box{padding:14px;max-height:80vh}
-  #zeroEditModal .ze-row{margin-bottom:6px}
-  #zeroEditModal .ze-row label{font-size:12px}
-  #zeroEditModal .ze-row input{width:65px}
+  /* zeroEditModal mobile CSS removed — replaced by sequential quick-edit */
   .mode-toggle button{padding:6px 10px !important;font-size:11px !important;min-height:auto}
   .mode-toggle{flex-shrink:0}
   .controls .card{flex-direction:column;align-items:stretch}
@@ -321,11 +319,7 @@ body.theme-dark .sticky-sitout .ghost,body.theme-blue .sticky-sitout .ghost,body
   #startSession{width:100%}
 }
 
-/* ===== ZERO EDIT MODAL ===== */
-#zeroEditModal .modal-box{border-top:4px solid var(--accent)}
-#zeroEditModal .ze-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-#zeroEditModal .ze-row label{margin:0;flex:1;font-size:13px;font-weight:600}
-#zeroEditModal .ze-row input{width:80px}
+/* ===== ZERO EDIT MODAL CSS (removed — replaced by sequential quick-edit) ===== */
 
 /* ===== GENERIC CONFIRM / PROMPT MODAL ===== */
 #genericModal .modal-box{border-top:4px solid var(--accent)}
@@ -981,26 +975,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
   </div>
 </div>
 
-<!-- ===== ZERO EDIT MODAL ===== -->
-<div id="zeroEditModal" class="modal-overlay">
-  <div class="modal-box">
-    <h3>Edit Zero Bets</h3>
-    <p style="font-size:13px;color:var(--muted);margin:0 0 12px;">Set a uniform amount for all three, or enter different amounts for each.</p>
-    <div class="ze-row">
-      <label>Uniform Bet:</label>
-      <input id="zeUniform" type="number" min="0" value="5" />
-      <button id="zeApplyUniform" style="padding:6px 10px;font-size:12px;">Apply to All</button>
-    </div>
-    <hr style="border:none;border-top:1px solid rgba(0,0,0,0.1);margin:10px 0;">
-    <div class="ze-row"><label>Bet on 0:</label><input id="zeBet0" type="number" min="0" value="5" /></div>
-    <div class="ze-row"><label>Bet on 0/00 Split:</label><input id="zeBetSplit" type="number" min="0" value="5" /></div>
-    <div class="ze-row"><label>Bet on 00:</label><input id="zeBet00" type="number" min="0" value="5" /></div>
-    <div class="modal-actions">
-      <button id="zeSave" style="background:#16a34a;">Save</button>
-      <button id="zeCancel" class="ghost">Cancel</button>
-    </div>
-  </div>
-</div>
+<!-- ===== ZERO EDIT MODAL (removed — replaced by sequential quick-edit) ===== -->
 
 <!-- ===== QUICK BET KEYPAD MODAL ===== -->
 <div id="quickBetModal" class="modal-overlay">
@@ -1278,7 +1253,7 @@ body.theme-dark .ssb-blue { color:#60a5fa; border-color:#60a5fa; }
         <button class="ghost" onclick="cancelSitOut()" style="background:#fff;border-color:red;color:red;">Cancel</button>
       </div>
 
-      <div class="uniform-bet-bar" id="uniformBetBar">Tap to quick-edit • Double-tap for full editor</div>
+      <div class="uniform-bet-bar" id="uniformBetBar">Tap any box to quick-edit • Double-tap to edit all forward</div>
       <div class="zeros-strip" id="zerosStrip">
         <div class="zeroItem" id="bet0Card" data-bet="bet0">
           <div style="font-size:11px;color:var(--muted);">Bet on 0</div>
@@ -2045,25 +2020,7 @@ $('btnRaise').onclick=()=>{
 };
 $('btnHold').onclick=()=>{dismissModal('raiseHoldModal');state.spinCounter=0;refresh();};
 
-/* ===== ZERO EDIT MODAL ===== */
-function openZeroEdit(){
-  $('zeBet0').value=state.bet0;
-  $('zeBet00').value=state.bet00;
-  $('zeBetSplit').value=state.betSplit;
-  $('zeUniform').value=state.unit;
-  $('zeroEditModal').style.display='flex';
-}
-$('zeApplyUniform').onclick=()=>{
-  const v=parseFloat($('zeUniform').value)||0;
-  $('zeBet0').value=v;$('zeBet00').value=v;$('zeBetSplit').value=v;
-};
-$('zeSave').onclick=()=>{
-  state.bet0=parseFloat($('zeBet0').value)||0;
-  state.bet00=parseFloat($('zeBet00').value)||0;
-  state.betSplit=parseFloat($('zeBetSplit').value)||0;
-  $('zeroEditModal').style.display='none';refresh();
-};
-$('zeCancel').onclick=()=>{$('zeroEditModal').style.display='none';};
+/* ===== ZERO EDIT MODAL (removed — replaced by sequential quick-edit) ===== */
 
 /* ===== QUICK BET KEYPAD ===== */
 let quickBetTarget=null;
@@ -2071,6 +2028,11 @@ let quickBetValue='';
 let quickBetReturnTo=null;
 
 const BET_LABELS={bet0:'Bet on 0',betSplit:'0/00 Split',bet00:'Bet on 00'};
+const BET_ORDER=['bet0','betSplit','bet00'];
+
+/* Sequential quick-edit state */
+let seqEditQueue=[];  // remaining bet keys to edit in sequence
+let seqEditActive=false;
 
 var qkFirstPress=true;
 function openQuickBet(target){
@@ -2101,6 +2063,12 @@ $('qkSave').onclick=()=>{
   const val=parseInt(quickBetValue)||0;
   state[quickBetTarget]=val;
   $('quickBetModal').style.display='none';
+  // If we're in a sequential edit, advance to next bet
+  if(seqEditActive && seqEditQueue.length>0){
+    openQuickBet(seqEditQueue.shift());
+    return;
+  }
+  seqEditActive=false;
   if(quickBetReturnTo){
     updateCustomRaiseDisplay();
     $(quickBetReturnTo).style.display='flex';
@@ -2112,6 +2080,8 @@ $('qkSave').onclick=()=>{
 };
 $('qkCancel').onclick=()=>{
   $('quickBetModal').style.display='none';
+  seqEditQueue=[];
+  seqEditActive=false;
   if(quickBetReturnTo){
     $(quickBetReturnTo).style.display='flex';
   } else {
@@ -2125,19 +2095,32 @@ let tapTimer=null;
 let tapCount=0;
 let tapTarget=null;
 
+function startSequentialEdit(startKey){
+  const idx=BET_ORDER.indexOf(startKey);
+  if(idx<0)return;
+  seqEditQueue=BET_ORDER.slice(idx+1); // everything AFTER the start key
+  seqEditActive=true;
+  quickBetReturnTo=null;
+  openQuickBet(startKey);
+}
+
 function handleZeroTap(betKey){
   tapCount++;
   if(tapCount===1){
     tapTarget=betKey;
     tapTimer=setTimeout(()=>{
+      // Single tap — open quick keypad for just this one bet
+      seqEditActive=false;
+      seqEditQueue=[];
       quickBetReturnTo=null;
       openQuickBet(tapTarget);
       tapCount=0;tapTarget=null;
     },300);
   } else if(tapCount===2){
+    // Double tap — start sequential edit from this bet forward
     clearTimeout(tapTimer);
     tapCount=0;tapTarget=null;
-    openZeroEdit();
+    startSequentialEdit(betKey);
   }
 }
 
@@ -2608,7 +2591,7 @@ function cancelSitOut(){
       state.sitOut=0;
       state.sitOutZerosThisSitOut=0;
       appConfirm('Change Bets','Would you like to change your bet amounts before resuming?').then(changeBet=>{
-        if(changeBet)openZeroEdit();
+        if(changeBet)startSequentialEdit('bet0');
         refresh();
       });
     }
@@ -3809,7 +3792,7 @@ function executeStrategySwitch(targetStrategy){
         });
       }
       // Re-register the updated service worker
-      navigator.serviceWorker.register('./sw.js');
+      navigator.serviceWorker.register('./sw.js?v=17b');
     });
   }
 
